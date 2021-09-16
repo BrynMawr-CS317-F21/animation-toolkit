@@ -16,6 +16,17 @@ class Look : public atkui::Framework {
     vec3 target = vec3(_mouseX, _mouseY, 0);
     setColor(vec3(1,0,0));
     drawSphere(target, 5);
+
+    float y = 0.5 * height();
+
+    // eye white
+    float leftW = 0.25 * width();
+    float rightW = 0.75 * width();
+
+      
+    setColor(vec3(1,1,1));
+    drawSphere(vec3(leftW, y, -400), 170);
+    drawSphere(vec3(rightW, y, -400), 170);
   }
 
   void mouseMove(int x, int y) {

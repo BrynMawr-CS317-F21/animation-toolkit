@@ -22,9 +22,9 @@ class Example : public atkui::Framework {
   }
 
   private:
-  float theta;
-  float thetaRate;
-  float r;
+    float theta;
+    float thetaRate;
+    float r;
 };
 
 int main(int argc, char** argv) {
