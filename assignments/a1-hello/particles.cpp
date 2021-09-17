@@ -12,7 +12,10 @@ class Particles : public atkui::Framework
     struct sParticle storeP[110];
     for (int i = 0; i < 110; i++){
       struct sParticle someP;
-      someP.color = agl::randomUnitVector();
+      someP.color = vec3(random(),random(),random());
+      float speed = random();
+      someP.velocity = speed * direction;
+      someP.position = agl::randomUnitVector();
     }
     direction = vec3(2, 3, 0);
   }
