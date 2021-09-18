@@ -8,9 +8,9 @@ class Example : public atkui::Framework {
   }
 
   virtual void setup() {
-     theta = 0.0;
-     thetaRate = 0.1;
-     r = 250.0;
+    theta = 0.0;
+    thetaRate = 0.1;
+    r = 250.0;
   }
 
   virtual void scene() {

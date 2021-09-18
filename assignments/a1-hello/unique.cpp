@@ -8,12 +8,40 @@ class Unique : public atkui::Framework {
   }
 
   virtual void setup() {
-    // your code here!
+    positionX = width() * 0.5;
+    positionY = height() * 0.5;
+    theta = 0.0;
+    thetaRate = 0.01;
+    radius = 0.0;
+    radiusRate = 0.3;
+    tenDegree = acos(0.0)/9;
   }
 
   virtual void scene() {
-    // your code here!
+    for (int i = 0; i < 5; i++){
+      for (int j = 0; j < 36; j++){
+        setColor(agl::randomUnitVector());
+        float px;
+        float py;
+        radius += radiusRate * dt();
+        theta += thetaRate * dt();
+        if (radius >= width()/2 || radius >= height()/2)
+          radius = 0.0;
+        px = radius * cos(theta + j * tenDegree) + positionX;
+        py = radius * sin(theta + j * tenDegree) + positionY;
+        drawSphere(vec3(px, py, 0), 10);
+      }
+    }
   }
+
+ private:
+  float theta;
+  float thetaRate;
+  float positionX;
+  float positionY;
+  float tenDegree;
+  float radius;
+  float radiusRate;
 };
 
 int main(int argc, char** argv) {

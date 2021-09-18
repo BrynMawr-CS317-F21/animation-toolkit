@@ -21,8 +21,6 @@ class Look : public atkui::Framework {
     drawSphere(target, 5);
 
     float y = 0.5 * height();
-
-    // eye white
     float leftW = 0.25 * width();
     float rightW = 0.75 * width();
       
@@ -36,10 +34,10 @@ class Look : public atkui::Framework {
     float pyL = r * cos(thetaL) + y;
     float pxR = r * sin(thetaR) + rightW;
     float pyR = r * cos(thetaR) + y;
+
     setColor(vec3(0,0,0));
     drawSphere(vec3(pxL, pyL, 0), 50);
     drawSphere(vec3(pxR, pyR, 0), 50);
-
   }
 
   void mouseMotion(int x, int y, int dx, int dy) {
