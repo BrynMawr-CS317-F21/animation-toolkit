@@ -10,15 +10,18 @@ class Circles : public atkui::Framework {
       theta = 0.0;
       thetaRate = 0.001;
       radius = 0.0;
-      distance = 30.0;
-      r = 10.0;
-      positionX = width()/2;
-      positionY = height()/2;
-      tenDegree = acos(0.0)/9;
+      distance = 30.0; //set distance between each circle
+      r = 10.0; // set particle radius
+      positionX = width()/2; // set origin
+      positionY = height()/2; // set origin
+      tenDegree = acos(0.0)/9; 
+      //since acos(0.0) is 90 degree, we want 10 degree thus 
+      //divide it by 9
    }
 
    virtual void scene() {
       for (int i = 0; i < 11; i++){
+         //setting each circle into different color
          if ((i%5)==0)
             setColor(vec3(0,165,227)/255.0f);
          if ((i%5)==1)
@@ -29,12 +32,16 @@ class Circles : public atkui::Framework {
             setColor(vec3(255,87,104)/255.0f);
          if ((i%5)==4)
             setColor(vec3(255,162,58)/255.0f);
-         radius = i * distance;
+         radius = i * distance; 
+         // ensure that each particle will be in a 
+         // constant distance with the other circle
          for (int j = 0; j < 36; j++){
-            float px;
-            float py;
-            theta += thetaRate * dt();
-            if(i%2){
+            float px; //recording the x position of the particle
+            float py; //recording the y position of the particle
+            theta += thetaRate * dt(); //change the theta
+            if(i%2){ 
+               //i%2 to ensure neighboring circles moving in alternate direction
+               //j*tenDegree to ensure each particle split by 10 degree
                px = radius * cos(theta + j * tenDegree) + positionX;
                py = radius * sin(theta + j * tenDegree) + positionY;
                drawSphere(vec3(px, py, 0), r);

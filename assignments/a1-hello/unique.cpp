@@ -20,11 +20,13 @@ class Unique : public atkui::Framework {
   virtual void scene() {
     for (int i = 0; i < 5; i++){
       for (int j = 0; j < 36; j++){
-        setColor(agl::randomUnitVector());
+        setColor(agl::randomUnitVector()); //used random color
         float px;
         float py;
-        radius += radiusRate * dt();
+        radius += radiusRate * dt(); 
+        //magnifying the circle would be increasing the radius
         theta += thetaRate * dt();
+        //I still want to to be in random motion
         if (radius >= width()/2 || radius >= height()/2)
           radius = 0.0;
         px = radius * cos(theta + j * tenDegree) + positionX;
