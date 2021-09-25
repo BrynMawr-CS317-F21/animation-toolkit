@@ -16,7 +16,7 @@ class ParticleCubic : public atkui::Framework {
     time = elapsedTime()/duration;
     time = (float)fmod(time, 1.0f);
     drawSCurve();
-    position = (1-time)*(1-time)*(1-time)*B0 + 3.0f*(1-time)*(1-time)*time* B1 + 3.0f*time*time*(1-time)* B2 + time*time*time* B3;
+    position = bernstein(time);
     setColor(vec3(1));
     drawSphere(position, 10);
   }

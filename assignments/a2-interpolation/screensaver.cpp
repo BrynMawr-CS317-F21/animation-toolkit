@@ -1,92 +1,102 @@
 #include "atkui/framework.h"
 using namespace glm;
+class CurveS{
+  public:
+    vec3 b0;
+    vec3 b1;
+    vec3 b2;
+    vec3 b3;
 
+  CurveS(vec3 _b0, vec3 _b1, vec3 _b2, vec3 _b3){
+    b0 = _b0;
+    b1 = _b1;
+    b2 = _b2;
+    b3 = _b3;
+  }
+
+  CurveS(){
+    b0 = vec3(0);
+    b1 = vec3(0);
+    b2 = vec3(0);
+    b3 = vec3(0);
+  }
+};
 class Screensaver : public atkui::Framework {
  public:
   Screensaver() : atkui::Framework(atkui::Orthographic) {
   }
 
   void setup() {
-    a0 = agl::randomUnitVector() * width();
-    a1 = agl::randomUnitVector() * width();
-    a2 = agl::randomUnitVector() * width();
-    a3 = agl::randomUnitVector() * width();
-    b0 = agl::randomUnitVector() * width();
-    b1 = agl::randomUnitVector() * width();
-    b2 = agl::randomUnitVector() * width();
-    b3 = agl::randomUnitVector() * width();
-    c0 = vec3(0);
-    c1 = vec3(0);
-    c2 = vec3(0);
-    c3 = vec3(0);
-    t = 0.0;
+    start = randomizedCurve();
+    end = randomizedCurve();
+    current = CurveS();
+    time = 0.0;
   }
 
   void scene() {
-    drawBernstein(a0, a1, a2, a3);
-    drawBernstein(b0, b1, b2, b3);
-    float duration = 20.0f;
-    t = elapsedTime()/duration;
-    t = glm::clamp(t, 0.0f, 1.0f);
-    c0 = (1-t)*a0 + t*b0;
-    c1 = (1-t)*a1 + t*b1;
-    c2 = (1-t)*a2 + t*b2;
-    c3 = (1-t)*a3 + t*b3;
-    drawBernstein(c0, c1, c2, c3);
-    if(t==1){
-      t = 0;
-      produceCurve();
+    float duration = 5.0f;
+    time = elapsedTime()/duration;
+    time = (float)fmod(time, 1.0f);
+
+    while(time < 1){
+      if(curveEqual(current, end)){
+        time = 0;
+        produceCurve();
+      }
+      interpolateAB(time);
     }
   }
 
-  void produceCurve(){
-    a0 = b0;
-    a1 = b1;
-    a2 = b2;
-    a3 = b3;
-    b0 = agl::randomUnitVector() * width();
-    b1 = agl::randomUnitVector() * width();
-    b2 = agl::randomUnitVector() * width();
-    b3 = agl::randomUnitVector() * width();
+  CurveS randomizedCurve(){
+    CurveS some = CurveS();
+    some.b0 = agl::randomUnitVector() * width();
+    some.b1 = agl::randomUnitVector() * width();
+    some.b2 = agl::randomUnitVector() * width();
+    some.b3 = agl::randomUnitVector() * width();
+    return some;
   }
 
-  void drawBernstein(vec3 B0, vec3 B1, vec3 B2, vec3 B3){
+  void produceCurve(){
+    start = end;
+    end = randomizedCurve();
+  }
+
+  void interpolateAB(float time){
+    current.b0 = (1-time)*start.b0 + time*end.b0;
+    current.b1 = (1-time)*start.b1 + time*end.b1;
+    current.b2 = (1-time)*start.b2 + time*end.b2;
+    current.b3 = (1-time)*start.b3 + time*end.b3;
+    drawBernstein(current);
+  }
+
+  void drawBernstein(CurveS some){
     vec3 a;
     vec3 b;
     float size = 0.01;
     for (float t = 0; t < 1; t+=size){
       setColor(vec3(1));
-      a = bernstein(B0, B1, B2, B3, t);
-      b = bernstein(B0, B1, B2, B3, t + size);
+      a = bernstein(some, t);
+      b = bernstein(some, t + size);
       drawLine(a, b);
     }
   }
 
-  vec3 bernstein(vec3 B0, vec3 B1, vec3 B2, vec3 B3, float t){
-    return (1-t)*(1-t)*(1-t)*B0 + 3.0f*(1-t)*(1-t)*t* B1 + 3.0f*t*t*(1-t)* B2 + t*t*t* B3;
+  bool curveEqual(CurveS a, CurveS b){
+    return a.b0 == b.b0 && a.b1 == b.b1 && a.b2 == b.b2 
+      && a.b3 == b.b3;
+  }
+
+  vec3 bernstein(CurveS some, float t){
+    return (1-t)*(1-t)*(1-t)*some.b0 + 
+      3.0f*(1-t)*(1-t)*t* some.b1 + 3.0f*t*t*(1-t)* some.b2 
+        + t*t*t* some.b3;
   }
 
   private:
-    struct curve{
-      vec3 color;
-      vec3 _b0;
-      vec3 _b1;
-      vec3 _b2;
-      vec3 _b3;
-    };
-    vec3 a0;
-    vec3 a1;
-    vec3 a2;
-    vec3 a3;
-    vec3 b0;
-    vec3 b1;
-    vec3 b2;
-    vec3 b3;
-    vec3 c0;
-    vec3 c1;
-    vec3 c2;
-    vec3 c3;
-    float t;
+    CurveS start;
+    CurveS current;
+    CurveS end;
+    float time;
 };
 
 int main(int argc, char** argv) {
