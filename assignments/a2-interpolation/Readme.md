@@ -6,10 +6,5 @@ This shows the color varying depends on the position of each cube
 
 
 a2-drawcurve
-![image](https://user-images.githubusercontent.com/89867062/134755209-d6d115fc-5656-44d0-87ba-f5e22fbd9a7c.png)
 
-
-
-* images, gifs, videos
-* brief description of what each image/gif/video shows
 

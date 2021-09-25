@@ -30,15 +30,15 @@ class DrawCubic : public atkui::Framework
     if(isOne){
       for (float t = 0; t < 1; t+=size){
         // I am changing the color vector so that a difference could be seen
-        setColor(vec3(1,0,1)); 
+        setColor(vec3(1,1,0)); 
         a = bernstein(t);
         b = bernstein(t + size);
         drawLine(a, b);
       }
     }
-    else if (isTwo){
+    if (isTwo){
       for (float t = 0; t < 1; t+=size){
-        setColor(vec3(1,0,0));
+        setColor(vec3(0,0,1));
         a = deC(t);
         b = deC(t + size);
         drawLine(a, b);
