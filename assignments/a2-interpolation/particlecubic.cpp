@@ -13,8 +13,7 @@ class ParticleCubic : public atkui::Framework {
   virtual void scene() {
 
     float duration = 5.0f;
-    //time += dt()/duration;
-    time += elapsedTime()/duration;
+    time = elapsedTime()/duration;
     time = (float)fmod(time, 1.0f);
     vec3 position;
     position = (1-time)*(1-time)*(1-time)*B0 
@@ -47,7 +46,6 @@ class ParticleCubic : public atkui::Framework {
   vec3 B2 = vec3(250.0f, 100.0f, 0.0f);
   vec3 B3 = vec3(300.0f, 300.0f, 0.0f);
   float time;
-  
 };
 
 int main(int argc, char** argv) {

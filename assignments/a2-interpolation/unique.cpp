@@ -36,7 +36,7 @@ class A2Unique : public atkui::Framework {
     float size = 0.000001;
     vec3 color = agl::randomUnitVector();
     for (float t = 0; t < 1; t+=size){
-      setColor(vec3(0,1,1));
+      setColor(color);
       a = bernstein(B0, B1, B2, B3, t);
       b = bernstein(B0, B1, B2, B3, t + size);
       drawLine(a, b);
