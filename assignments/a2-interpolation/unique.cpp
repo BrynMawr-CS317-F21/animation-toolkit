@@ -7,7 +7,7 @@ class A2Unique : public atkui::Framework {
   }
 
   void setup() {
-   num = 8;
+   num = 3;
    distance = width()/num;
   }
 
@@ -15,13 +15,14 @@ class A2Unique : public atkui::Framework {
    float px0;
    float px1;
    float px2;
-   float py1 = height()/4;
-   float py2 = height()/4 * 3.0f;
+   float py1 = height() * 0.25;
+   float py2 = height() * 0.75f;
    for(int i = 0; i < num; i++){
+     theta = 0.0f;
      theta += 1.2f * dt();
-     px0 = distance/2 + i * distance;
-     px1 = distance * sin(theta) + i * distance;
-     px2 = (i+1) * distance - px1;
+     px0 = distance/2 + distance;
+     px1 = distance * sin(theta) + distance;
+     px2 = distance - px1;
      c0 = vec3(px0, height(), 0);
      c1 = vec3(px1, py1, 0);
      c2 = vec3(px2, py2, 0);
@@ -33,7 +34,7 @@ class A2Unique : public atkui::Framework {
   void drawBernstein(vec3 B0, vec3 B1, vec3 B2, vec3 B3){
     vec3 a;
     vec3 b;
-    float size = 0.000001;
+    float size = 0.01;
     vec3 color = agl::randomUnitVector();
     for (float t = 0; t < 1; t+=size){
       setColor(color);
@@ -54,7 +55,7 @@ class A2Unique : public atkui::Framework {
   vec3 c3;
   int num; //store number of curves used
   float theta;
-  float distance; 
+  float distance;
 };
 
 int main(int argc, char** argv) {
