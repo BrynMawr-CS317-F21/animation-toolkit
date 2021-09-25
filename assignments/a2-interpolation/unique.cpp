@@ -16,6 +16,10 @@ class A2Unique : public atkui::Framework {
    }
   }
 
+  /** 
+   * draw several curves with b1 and b2 control points changing in the direction of cos
+   * color is randomized
+   */
   void scene() {
    float px0;
    float px1;
@@ -25,8 +29,8 @@ class A2Unique : public atkui::Framework {
    for(int i = 0; i < num; i++){
      theta += dt() * 0.5;
      px0 = i * distance + distance * 0.5;
-     px1 = distance * 1.5 * sin(theta) + (i+0.5) * distance;
-     px2 = (i+1) * distance - distance * 1.5 * sin(theta);
+     px1 = distance * 1.5 * cos(theta) + (i+0.5) * distance;
+     px2 = (i+1) * distance - distance * 1.5 * cos(theta);
      c0 = vec3(px0, height(), 0);
      c1 = vec3(px1, py1, 0);
      c2 = vec3(px2, py2, 0);
@@ -34,7 +38,7 @@ class A2Unique : public atkui::Framework {
      drawBernstein(c0, c1, c2, c3, colorS[i]);
    }
   }
-
+  //draw the curve using bernstein algorithm
   void drawBernstein(vec3 B0, vec3 B1, vec3 B2, vec3 B3, vec3 color){
     vec3 a;
     vec3 b;

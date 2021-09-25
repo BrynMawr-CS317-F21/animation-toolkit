@@ -11,8 +11,8 @@ class Gradient : public atkui::Framework {
     cne = vec3(0,1,1);
     csw = vec3(1,0,0);
     cse = vec3(1,0,1);
-    n = 10;
-    size = width()/n;
+    n = 10; //number of cubes produced
+    size = width()/n; //make sure the size of each cube
   }
 
   virtual void scene() {
@@ -28,12 +28,16 @@ class Gradient : public atkui::Framework {
     for (int i = 0; i<=n; i++){
       for (int j = 0; j<=n; j++){
         position = vec3(px, py, 0); //store the position of the cube
+
+        //interpolate the color of each cube
         cx0 = cnw * (1-tx) + cne * tx;
         cx1 = csw * (1-tx) + cse * tx;
         c = cx0 * (1-ty) + cx1 * ty;
+
         px = size/2 + i*size;
         py = size/2 + j*size;
-        tx = px/width();
+        //this could make sure that tx and ty are within [0,1]
+        tx = px/width(); 
         ty = 1- py/width();
         setColor(c);
         drawCube(position, vec3(size, size, size));
