@@ -26,25 +26,28 @@ class Screensaver : public atkui::Framework {
   Screensaver() : atkui::Framework(atkui::Orthographic) {
   }
 
-  void setup() {
+  virtual void setup() {
     start = randomizedCurve();
     end = randomizedCurve();
     current = CurveS();
     time = 0.0;
   }
 
-  void scene() {
-    float duration = 5.0f;
+  virtual void scene() {
+    float duration = 2.0f;
     time = elapsedTime()/duration;
     time = (float)fmod(time, 1.0f);
-
-    while(time < 1){
-      if(curveEqual(current, end)){
-        time = 0;
-        produceCurve();
-      }
-      interpolateAB(time);
+    if(curveEqual(current, end)){
+      start = end;
+      end = randomizedCurve();
     }
+    drawBernstein(start);
+    drawBernstein(end);
+    current.b0 = (1-time)*start.b0 + time*end.b0;
+    current.b1 = (1-time)*start.b1 + time*end.b1;
+    current.b2 = (1-time)*start.b2 + time*end.b2;
+    current.b3 = (1-time)*start.b3 + time*end.b3;
+    drawBernstein(current);
   }
 
   CurveS randomizedCurve(){
@@ -54,19 +57,6 @@ class Screensaver : public atkui::Framework {
     some.b2 = agl::randomUnitVector() * width();
     some.b3 = agl::randomUnitVector() * width();
     return some;
-  }
-
-  void produceCurve(){
-    start = end;
-    end = randomizedCurve();
-  }
-
-  void interpolateAB(float time){
-    current.b0 = (1-time)*start.b0 + time*end.b0;
-    current.b1 = (1-time)*start.b1 + time*end.b1;
-    current.b2 = (1-time)*start.b2 + time*end.b2;
-    current.b3 = (1-time)*start.b3 + time*end.b3;
-    drawBernstein(current);
   }
 
   void drawBernstein(CurveS some){

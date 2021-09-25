@@ -16,7 +16,7 @@ class Particles : public atkui::Framework
       //setting color into random
       someP.color = agl::randomUnitVector();
       someP.speed = agl::random();
-      //the reason for using spped but not velocity is that velocity have direction
+      //the reason for using spead but not velocity is that velocity have direction
       //but we dont want direction to be random, so it is not in our class
       someP.position = vec3(agl::random() * width(), agl::random() * height(), 0);
       //setting the start position into random
