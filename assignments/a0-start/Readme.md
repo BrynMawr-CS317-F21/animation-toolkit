@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Readme
 
 ## Sphere2D
@@ -13,5 +14,3 @@ Tab spacebar so that the sphere randomly move in one direction.
 Tab R so that the ball goes back to the orginal direction.
 
 In the video I have tabbed spacebar several times.
-
-
