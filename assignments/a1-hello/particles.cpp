@@ -27,7 +27,7 @@ class Particles : public atkui::Framework
   virtual void scene() {
     for (int j = 0; j < 300; j++){
       setColor(storeP[j].color);
-      storeP[j].position = storeP[j].position + storeP[j].speed * direction * elapsedTime();
+      storeP[j].position = storeP[j].position + storeP[j].speed * direction * dt();
       //when flying out of the screen, setting the out-bounded position into 0
       if (storeP[j].position.x > width()){
         storeP[j].position.x = 0;
