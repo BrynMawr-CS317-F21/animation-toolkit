@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "atkui/framework.h"
 
 using glm::vec3;
