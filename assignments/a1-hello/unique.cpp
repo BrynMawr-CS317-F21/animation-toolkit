@@ -18,11 +18,11 @@ class Unique : public atkui::Framework {
   }
 
   virtual void scene() {
+    float px;
+    float py;
     for (int i = 0; i < 5; i++){
       for (int j = 0; j < 36; j++){
         setColor(agl::randomUnitVector()); //used random color
-        float px;
-        float py;
         radius += radiusRate * dt(); 
         //magnifying the circle would be increasing the radius
         theta += thetaRate * dt();

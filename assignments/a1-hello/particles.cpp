@@ -15,7 +15,10 @@ class Particles : public atkui::Framework
       struct sParticle someP;
       //setting color into random
       someP.color = agl::randomUnitVector();
-      someP.speed = agl::random();
+      //the speed using only random would be with in range [0,1], thus to make
+      //make the effect more significant, I have multiplied it with 100.0, but
+      //still, the speed is random.
+      someP.speed = agl::random() * 100.0f;
       //the reason for using spead but not velocity is that velocity have direction
       //but we dont want direction to be random, so it is not in our class
       someP.position = vec3(agl::random() * width(), agl::random() * height(), 0);
@@ -27,7 +30,7 @@ class Particles : public atkui::Framework
   virtual void scene() {
     for (int j = 0; j < 300; j++){
       setColor(storeP[j].color);
-      storeP[j].position = storeP[j].position + storeP[j].speed * direction * dt();
+      storeP[j].position += storeP[j].speed * direction * dt();
       //when flying out of the screen, setting the out-bounded position into 0
       if (storeP[j].position.x > width()){
         storeP[j].position.x = 0;
@@ -37,7 +40,6 @@ class Particles : public atkui::Framework
       }
       drawSphere (storeP[j].position, radius);
     }
-
   }
 
   private:
