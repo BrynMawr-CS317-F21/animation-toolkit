@@ -33,6 +33,7 @@ int main() {
    // test with 2 values
    std::cout << "\n-------------------------------\n";
    std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;
+
    spline.appendKey(0, vec3(0.0, 0.0, 0.0));
    spline.appendKey(1, vec3(1.0, 1.0, 0.0));
 
@@ -55,6 +56,7 @@ int main() {
 
    // test with 3 values (with different interpolators)
    spline.appendKey(2, vec3(2,0,0));
+
    std::cout << "\n-------------------------------\n";
    test = spline.getValue(1.5);
    std::cout << "Current interpolation type: " << spline.getInterpolationType() << std::endl;

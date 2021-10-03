@@ -8,8 +8,8 @@ class Example : public atkui::Framework {
   }
 
   virtual void setup() {
-     currentPos = vec3(0, 1, -4);
-     vel = 100.0f * vec3(1, 3, 4);
+    currentPos = vec3(0, 1, -4);
+    vel = 100.0f * vec3(1, 3, 4);
   }
 
   virtual void scene() {

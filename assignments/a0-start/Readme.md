@@ -1,15 +1,16 @@
+<<<<<<< HEAD
 # Readme
 
 ## Sphere2D
 
-TODO: Replace this text with results
-
-* images, gifs, videos
-* brief description of what each image/gif/video shows
+![image](https://user-images.githubusercontent.com/89867062/132575063-5f6457c6-ca4c-4940-94f2-8ca5f3aafdc1.png)
 
 ## Sphere3D
 
-TODO: Replace this text with results
+https://user-images.githubusercontent.com/89867062/132722071-a25dc82a-e246-426d-8770-57434b7c0fb8.mov
 
-* images, gifs, videos
-* brief description of what each image/gif/video shows
+Tab spacebar so that the sphere randomly move in one direction. 
+
+Tab R so that the ball goes back to the orginal direction.
+
+In the video I have tabbed spacebar several times.
