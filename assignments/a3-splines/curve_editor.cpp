@@ -210,9 +210,7 @@ void CurveEditor::mouseDown(int pButton, int state) {
       }
 
     } else if (mMode == REMOVE) {
-      mSelected = pickPoint(pX, height() - pY);
-      deletePoint(mSelected);
-
+      if (mSelected != -1 && !mShowControlPoints) deletePoint(mSelected);
     } else if (mMode == EDIT) {
       mSelected = pickPoint(pX, height() - pY);
       std::cout << "SELECTED: " << mSelected << std::endl;
