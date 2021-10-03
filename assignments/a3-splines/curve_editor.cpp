@@ -37,9 +37,9 @@ void CurveEditor::scene() {
       drawSphere(mSpline.getControlPoint(i), mRadius);
     }
   } else if(mSpline.getInterpolationType() == "Linear"){
-    for(int i = 0; i < size; i++){
+    for(int i = 0; i < mSpline.getNumControlPoints(); i++){
       setColor(vec3(0,0,1));
-      drawSphere(mSpline.getKey(i), mRadius);
+      drawSphere(mSpline.getControlPoint(i), mRadius);
     }
   } else {
     for(int i = 0; i < mSpline.getNumControlPoints(); i+=3){
