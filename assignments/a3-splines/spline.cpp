@@ -101,17 +101,29 @@ glm::vec3 Spline::getValue(float t) const {
     mInterpolator->computeControlPoints(mKeys);
     mDirty = false;
   }
-  if(mKeys.size()==0)
+  int size = mKeys.size();
+  if(size==0)
     return glm::vec3(0);
   if(mTimes[0] > t)
     return mKeys[0];
-  if(mTimes[mKeys.size()-1] < t)
-    return mKeys[mKeys.size()-1];
+  if(mTimes[size-1] < t)
+    return mKeys[size-1];
+
   double u = 0.0;
   int segment = 0;
-  for (int i = 0; i < mKeys.size()-2; i++){
-    if (mTimes[i] >= t && mTimes[i+1] <= t){
-      segment = i;
+  if(getInterpolationType() != "Catmull-Rom"){
+    for (int i = 0; i < size-1; i++){
+      if (mTimes[i] <= t && mTimes[i+1] >= t){
+        segment = i;
+      }
+    }  
+  } else {
+    if(size>=3){
+      for (int i = 0; i < size-1; i++){
+        if (mTimes[i] <= t && mTimes[i+1] >= t){
+          segment = i;
+        }
+      }  
     }
   }
   u = (t - mTimes[segment])/(mTimes[segment+1] - mTimes[segment]);

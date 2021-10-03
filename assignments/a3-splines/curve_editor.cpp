@@ -31,29 +31,73 @@ void CurveEditor::setup() {
 void CurveEditor::scene() {
   drawState();
   int size = mSpline.getNumKeys();
-  for(int i = 0; i < size; i++){
-    setColor(vec3(0,0,1));
-    drawSphere(mSpline.getKey(i), mRadius);
+  if(mSpline.getInterpolationType() == "Hermite"){
+    for(int i = 0; i < mSpline.getNumControlPoints(); i+=2){
+      setColor(vec3(0,0,1));
+      drawSphere(mSpline.getControlPoint(i), mRadius);
+    }
+  } else if(mSpline.getInterpolationType() == "Linear"){
+    for(int i = 0; i < size; i++){
+      setColor(vec3(0,0,1));
+      drawSphere(mSpline.getKey(i), mRadius);
+    }
+  } else {
+    for(int i = 0; i < mSpline.getNumControlPoints(); i+=3){
+      setColor(vec3(0,0,1));
+      drawSphere(mSpline.getControlPoint(i), mRadius);
+    }
   }
 
-  float diff = 0.01f;
+  float diff = 0.01;
   vec3 a;
   vec3 b;
-  if (size >= 2){
+  float time1;
+  float time2;
+  if(mSpline.getInterpolationType() == "Catmull-Rom"){
+    if(mSpline.getNumKeys() >= 3){
+      for (int i = 0; i < size-1; i++){
+        time1 = mSpline.getTime(i);
+        time2 = mSpline.getTime(i+1);
+        for (float t = time1; t <= time2; t=t+diff){
+          setColor(vec3(0,0,1)); 
+          a = mSpline.getValue(t);
+          b = mSpline.getValue(t+diff);
+          drawLine(a, b);
+        }
+      }
+    }
+  } else {
     for (int i = 0; i < size-1; i++){
-      for (float t = mSpline.getTime(i); t <= mSpline.getTime(i+1); t+=diff){
+      time1 = mSpline.getTime(i);
+      time2 = mSpline.getTime(i+1);
+      for (float t = time1; t <= time2; t=t+diff){
         setColor(vec3(0,0,1)); 
         a = mSpline.getValue(t);
-        b = mSpline.getValue(t + diff);
+        b = mSpline.getValue(t+diff);
         drawLine(a, b);
       }
     }
   }
+  
   if(mShowControlPoints){
-    setColor(vec3(0,0,1)); 
-    if(mSpline.getInterpolationType() == "Hermite")
-      
-    if(mSpline.getInterpolationType() == "Catmull-Rom")
+    if(mSpline.getInterpolationType() == "Hermite"){
+      for(int i = 1; i < mSpline.getNumControlPoints(); i+=2){
+        setColor(vec3(1,1,0)); 
+        drawSphere(mSpline.getControlPoint(i-1)+mSpline.getControlPoint(i), mRadius);
+        drawLine(mSpline.getControlPoint(i-1), mSpline.getControlPoint(i-1)+mSpline.getControlPoint(i));
+      }
+    }
+
+    if(mSpline.getInterpolationType() == "Catmull-Rom"){
+      for(int i = 1; i < mSpline.getNumControlPoints(); i+=3){
+        setColor(vec3(1,1,0)); 
+        drawSphere(mSpline.getControlPoint(i), mRadius);
+        drawSphere(mSpline.getControlPoint(i+1), mRadius);
+        drawLine(mSpline.getControlPoint(i-1), mSpline.getControlPoint(i));
+        drawLine(mSpline.getControlPoint(i), mSpline.getControlPoint(i+1));
+        drawLine(mSpline.getControlPoint(i+1), mSpline.getControlPoint(i+2));
+      }
+    }
   }
 }
 
@@ -63,6 +107,7 @@ void CurveEditor::addPoint(const vec3& p) {
 }
 
 void CurveEditor::deletePoint(int key) {
+  if (mShowControlPoints) return;
   mSpline.deleteKey(key);
 }
 
