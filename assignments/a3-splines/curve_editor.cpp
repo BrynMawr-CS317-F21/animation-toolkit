@@ -30,7 +30,31 @@ void CurveEditor::setup() {
 
 void CurveEditor::scene() {
   drawState();
-  // todo: your code here
+  int size = mSpline.getNumKeys();
+  for(int i = 0; i < size; i++){
+    setColor(vec3(0,0,1));
+    drawSphere(mSpline.getKey(i), mRadius);
+  }
+
+  float diff = 0.01f;
+  vec3 a;
+  vec3 b;
+  if (size >= 2){
+    for (int i = 0; i < size-1; i++){
+      for (float t = mSpline.getTime(i); t <= mSpline.getTime(i+1); t+=diff){
+        setColor(vec3(0,0,1)); 
+        a = mSpline.getValue(t);
+        b = mSpline.getValue(t + diff);
+        drawLine(a, b);
+      }
+    }
+  }
+  if(mShowControlPoints){
+    setColor(vec3(0,0,1)); 
+    if(mSpline.getInterpolationType() == "Hermite")
+      
+    if(mSpline.getInterpolationType() == "Catmull-Rom")
+  }
 }
 
 void CurveEditor::addPoint(const vec3& p) {

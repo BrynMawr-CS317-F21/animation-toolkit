@@ -50,7 +50,7 @@ class Spline
     // @param keyID: Valid IDs are in range [0, getNumKeys()-1]
     glm::vec3 getKey(int keyID) const;
 
-    // Return the time  of the key with the given ID
+    // Return the time of the key with the given ID
     // @param keyID: Valid IDs are in range [0, getNumKeys()-1]
     float getTime(int keyID) const;
 
