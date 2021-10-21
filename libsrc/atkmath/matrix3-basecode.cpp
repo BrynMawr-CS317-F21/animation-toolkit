@@ -189,8 +189,15 @@ void Matrix3::toAxisAngle(Vector3& axis, double& angleRad) const
 
 void Matrix3::fromAxisAngle(const Vector3& axis, double angleRad)
 {
-   // TODO
-   *this = Identity;
+   float x = axis[0];
+   float y = axis[1];
+   float z = axis[2];
+   float cT = cos(angleRad);
+   float sT = sin(angleRad);
+   Matrix3 tmp = Matrix3(cT + (1-cT)*x*x,       -sT*z + (1-cT)*x*y,   y*sT + x*z*(1-cT),
+                         -z*sT+(1-cT)*x*y,      cT*(1-cT)*y*y,        -x*sT+(1-cT)*y*z,
+                         sT*y + (1-cT)*x*y,     -x*sT+(1-cT)*y*z,     cT + (1-cT)*z*z);
+   *this = tmp;
 }
 
 }
