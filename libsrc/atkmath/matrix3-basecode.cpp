@@ -184,7 +184,40 @@ void Matrix3::fromEulerAnglesZYX(const Vector3& angleRad)
 
 void Matrix3::toAxisAngle(Vector3& axis, double& angleRad) const
 {
-   // TODO
+   float w2 = 0.25 * (m11 + m22 + m33 + 1);
+   float x2 = 0.25 * (1 + m11 - m22 - m33);
+   float y2 = 0.25 * (1 - m11 + m22 - m33);
+   float z2 = 0.25 * (1 - m11 - m22 + m33);
+   float max = std::max({w2, x2, y2, z2});
+   float w,x,y,z;
+   if(max == w2){
+      w = sqrt(w2);
+      x = 0.25 * (m32 - m23) / w;
+      y = 0.25 * (m13 - m31) / w;
+      z = 0.25 * (m21 - m12) / w;
+   }
+   else if(max == x2){
+      x = sqrt(x2);
+      y = 0.25 * (m21 + m12) / x;
+      z = 0.25 * (m13 + m31) / x;
+      w = 0.25 * (m32 - m23) / x;
+   }
+   else if(max == y2){
+      y = sqrt(y2);
+      x = 0.25 * (m21 + m12) / y;
+      z = 0.25 * (m23 + m32) / y;
+      w = 0.25 * (m13 - m31) / y;
+   } else {
+      z = sqrt(z2);
+      x = 0.25 * (m13 + m31) / z;
+      y = 0.25 * (m23 + m32) / z;
+      w = 0.25 * (m21 - m12) / z;
+   }
+
+   angleRad = acos(w) * 2;
+	axis[0] = x/sin(angleRad/2);
+	axis[1] = y/sin(angleRad/2);
+	axis[2] = z/sin(angleRad/2);
 }
 
 void Matrix3::fromAxisAngle(const Vector3& axis, double angleRad)
@@ -195,7 +228,7 @@ void Matrix3::fromAxisAngle(const Vector3& axis, double angleRad)
    float cT = cos(angleRad);
    float sT = sin(angleRad);
    Matrix3 tmp = Matrix3(cT + (1-cT)*x*x,       -sT*z + (1-cT)*x*y,   y*sT + x*z*(1-cT),
-                         -z*sT+(1-cT)*x*y,      cT*(1-cT)*y*y,        -x*sT+(1-cT)*y*z,
+                         -z*sT+(1-cT)*x*y,      cT+(1-cT)*y*y,        -x*sT+(1-cT)*y*z,
                          sT*y + (1-cT)*x*y,     -x*sT+(1-cT)*y*z,     cT + (1-cT)*z*z);
    *this = tmp;
 }
