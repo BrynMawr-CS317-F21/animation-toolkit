@@ -98,7 +98,7 @@ void Skeleton::setPose(const Pose& pose)
 
 Joint* Skeleton::getByName(const std::string& name) const
 {
-    for (unsigned int i = 0; i < mJoints.size(); i++)
+    for (int i = 0; i < mJoints.size(); i++)
     {
         if (name == mJoints[i]->getName())
         {
