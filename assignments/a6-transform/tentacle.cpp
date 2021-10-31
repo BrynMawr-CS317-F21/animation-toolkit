@@ -39,7 +39,13 @@ public:
    {
       // todo animate joints
       // hint: use glm::angleAxis(...) to compute quaternions for each joint
-      quat tmp = glm::angleAxis(elapsedTime(), vec3(0,0,1));
+      quat tmp;
+      Joint* someJoint;
+      for(int i = 0; i<5; i++){
+         tmp = glm::angleAxis(sin(elapsedTime() * i), vec3(0,0,1));
+         someJoint = _tentacle.getByID(i);
+         someJoint->setLocalRotation(tmp);
+      }
       _tentacle.fk(); // computes local2global transforms
       setColor(vec3(0,1,0));
 
