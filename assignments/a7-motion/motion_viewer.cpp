@@ -37,6 +37,7 @@ public:
    }
 
    virtual void keyUp(int key, int mods) {
+      
    }
 
 private:
@@ -47,6 +48,12 @@ private:
    int currentFrame = 0; 
    bool paused = false;
    float time = 0;
+   bool is0 = false;
+   bool isP = false;
+   bool forward = false;
+   bool backward = false;
+   bool increSpeed = false;
+   bool decreSpeed = false;
 };
 
 

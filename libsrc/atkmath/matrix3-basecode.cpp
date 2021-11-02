@@ -188,7 +188,9 @@ void Matrix3::toAxisAngle(Vector3& axis, double& angleRad) const
    float x2 = 0.25 * (1 + m11 - m22 - m33);
    float y2 = 0.25 * (1 - m11 + m22 - m33);
    float z2 = 0.25 * (1 - m11 - m22 + m33);
-   float max = std::max({w2, x2, y2, z2});
+   float max = std::max(w2, x2);
+   max = std::max(max, y2);
+   max = std::max(max, z2);
    float w,x,y,z;
    if(max == w2){
       w = sqrt(w2);
