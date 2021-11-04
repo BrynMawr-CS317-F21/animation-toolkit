@@ -18,8 +18,6 @@ public:
    }
 
    void scene() {
-      time += dt();
-      motion.update(skeleton, time);
 
       setColor(vec3(0,0,0.8));
       for (int i = 0; i < skeleton.getNumJoints(); i++) {
@@ -41,44 +39,52 @@ public:
       drawText(paused? "Paused" : "Playing", 10, 15);
       drawText("Current frame: "+std::to_string(currentFrame), 10, 35);
       drawText("Time scale: "+std::to_string(timeScale), 10, 55);
-
+      float tmp = time;
+      if(paused){
+         tmp = time;
+         motion.update(skeleton, tmp);
+      } else {
+         time = tmp;
+         time += dt();
+         motion.update(skeleton, time);
+      }
       if(isP){
          if(!paused){
-            float tmp = time;
-            time = tmp;
-            //isP = false;
+            paused = true;
+            isP = false;
          } else {
-            time += dt();
-            //isP = false;
+            paused = false;
+            isP = false;
          }
       }
 
       if(is0){
          time = 0;
-         //is0 = false;
+         is0 = false;
       }
 
       if(paused){
          if(forward){
             time += motion.getDeltaTime();
-            //forward = false;
+            currentFrame++;
+            forward = false;
          }
          if(backward){
             time -= motion.getDeltaTime();
-            //backward = false;
+            currentFrame--;
+            backward = false;
          }
       }
-
       double delta = motion.getFramerate();
-
       if(increSpeed){
          timeScale = timeScale + 0.1;
-
-         //increSpeed = false;
+         time = time * timeScale;
+         increSpeed = false;
       }
       if(decreSpeed){
-         time = time * 2.0f;
-         //decreSpeed = false;
+         timeScale = timeScale - 0.1;
+         time = time * timeScale;
+         decreSpeed = false;
       }
 
 
