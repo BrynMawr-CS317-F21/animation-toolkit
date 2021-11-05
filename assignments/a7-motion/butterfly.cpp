@@ -45,14 +45,25 @@ public:
       // draw body
       Transform bodyGeometry(
          glm::angleAxis(glm::pi<float>()*0.5f, vec3(1,0,0)), // rotation
-         vec3(0), vec3(25, 200, 25)); // position, scale
+         vec3(0), //position
+         vec3(25, 200, 25)); // scale
 
       Transform lwingGeometry(
          eulerAngleRO(XYZ, vec3(0,0,0)),
          vec3(-80,0,0), 
          vec3(120,20,200));
+      
+      Transform lswingGeometry(
+         eulerAngleRO(XYZ, vec3(0,0,0)),
+         vec3(-80,0,0), 
+         vec3(120,20,200));
 
       Transform rwingGeometry(
+         eulerAngleRO(XYZ, vec3(0,0,0)),
+         vec3(80,0,0), 
+         vec3(120,20,200));
+
+      Transform rswingGeometry(
          eulerAngleRO(XYZ, vec3(0,0,0)),
          vec3(80,0,0), 
          vec3(120,20,200));
