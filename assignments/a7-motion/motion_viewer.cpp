@@ -75,18 +75,20 @@ public:
             backward = false;
          }
       }
+
       double delta = motion.getFramerate();
+
       if(increSpeed){
          timeScale = timeScale + 0.1;
-         time = time * timeScale;
+         motion.setFramerate(motion.getFramerate() + 0.1 * delta);
          increSpeed = false;
       }
+
       if(decreSpeed){
          timeScale = timeScale - 0.1;
-         time = time * timeScale;
+         motion.setFramerate(motion.getFramerate() - delta * 0.1);
          decreSpeed = false;
       }
-
 
    }
 
