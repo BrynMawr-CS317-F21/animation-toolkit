@@ -45,9 +45,10 @@ public:
          motion.update(skeleton, tmp);
       } else {
          time = tmp;
-         time += dt();
+         time += timeScale * dt();
          motion.update(skeleton, time);
       }
+
       if(isP){
          if(!paused){
             paused = true;
@@ -76,17 +77,15 @@ public:
          }
       }
 
-      double delta = motion.getFramerate();
-
       if(increSpeed){
          timeScale = timeScale + 0.1;
-         motion.setFramerate(motion.getFramerate() + 0.1 * delta);
+         time += timeScale * dt();
          increSpeed = false;
       }
 
       if(decreSpeed){
          timeScale = timeScale - 0.1;
-         motion.setFramerate(motion.getFramerate() - delta * 0.1);
+         time += timeScale * dt();
          decreSpeed = false;
       }
 
