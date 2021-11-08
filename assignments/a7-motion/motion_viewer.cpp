@@ -33,7 +33,7 @@ public:
       if(time >= motion.getDuration()){
          currentFrame = 0;
          time = 0;
-         time += dt();
+         time += timeScale * dt();
       }
 
       drawText(paused? "Paused" : "Playing", 10, 15);

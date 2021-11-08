@@ -79,6 +79,8 @@ public:
          vec3(80,0,-40), 
          vec3(20,20,50));
 
+      drawText("Press space to show axies ", 10, 55);
+
       setColor(vec3(0.4, 0.4, 0.8));
       push();
       transform(B * bodyGeometry);
@@ -108,6 +110,10 @@ public:
       transform(RST * rswingGeometry);
       drawSphere(vec3(0), 1);
       pop();
+   }
+
+   virtual void keyUp(int key, int mods){
+      
    }
 
 private:
