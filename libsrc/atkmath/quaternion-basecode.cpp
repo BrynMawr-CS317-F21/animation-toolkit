@@ -65,7 +65,9 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 	float x2 = 0.25 * (1 + rot[0][0] - rot[1][1] - rot[2][2]);
 	float y2 = 0.25 * (1 - rot[0][0] + rot[1][1] - rot[2][2]);
 	float z2 = 0.25 * (1 - rot[0][0] - rot[1][1] + rot[2][2]);
-	float max = std::max({w2, x2, y2, z2});
+	float max = std::max(w2, x2);
+    max = std::max(max, y2);
+    max = std::max(max, z2);
 	float w,x,y,z;
 	if(max == w2){
 		w = (float)sqrt(w2);
