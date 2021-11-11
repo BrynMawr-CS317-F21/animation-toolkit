@@ -42,7 +42,7 @@ public:
       quat tmp;
       Joint* someJoint;
       for(int i = 0; i<5; i++){
-         tmp = glm::angleAxis(sin(elapsedTime() * i), vec3(0,0,1));
+         tmp = glm::angleAxis((float) (sin(elapsedTime() * i)), vec3(0,0,1));
          someJoint = _tentacle.getByID(i);
          someJoint->setLocalRotation(tmp);
       }
