@@ -27,15 +27,33 @@ public:
    Motion spliceUpperBody(const Motion& lower, const Motion& upper, float alpha)
    {
       Motion result;
+      Pose newPose;
+      Joint* spine = _skeleton.getByName("Beta:Spine1");
       result.setFramerate(lower.getFramerate());
-      // todo: your code here
-      result.appendKey(lower.getKey(0));
+      for(int i = 0; i < lower.getNumKeys(); i++){
+         newPose = lower.getKey(i);
+         int numChild = spine->getNumChildren();
+         for(int j = 0; j < numChild; j++){
+            Joint* tmp = spine->getChildAt(j);
+            int id = tmp->getID();
+            newPose.jointRots.erase(newPose.jointRots.begin()+id);
+            glm::quat q = slerp(upper.getKey(i).jointRots[id], lower.getKey(i).jointRots[id], alpha);
+            newPose.jointRots.insert(newPose.jointRots.begin()+id, q);
+            //newPose.jointRots.insert(newPose.jointRots.begin()+id, upper.getKey(i+120).jointRots[id]);
+            // std::cout << upper.getKey(i+120).jointRots[id];
+            // std::cout << "\n";
+            // std::cout << lower.getKey(i).jointRots[id];
+            // std::cout << "\n";
+         }
+         result.appendKey(newPose);
+      }
       return result;
    }
 
    void scene()
    {  
       _splice.update(_skeleton, elapsedTime() * 0.5);
+      //_upper.update(_skeleton, elapsedTime() * 0.5);
       SkeletonDrawer drawer;
       drawer.draw(_skeleton, *this);
       drawText("alpha: "+std::to_string(_alpha), 10, 15);
