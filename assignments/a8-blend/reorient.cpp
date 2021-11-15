@@ -33,11 +33,19 @@ public:
    {
       Motion result;
       result.setFramerate(motion.getFramerate());
-      
+      float tmp = sin(heading);
+      quat direction = quat(cos(heading/2.0f), 0, sin(heading/2.0f), 0);
+      quat offsetDir = direction * inverse(motion.getKey(0).jointRots[0]);
+      vec3 offsetPos = pos - motion.getKey(0).rootPos;
       for (int i = 0; i < motion.getNumKeys(); i++){
-         Pose pose = 
+         Pose pose = motion.getKey(i);
+         pose.rootPos += offsetPos;
+         pose.rootPos = direction * pose.rootPos; 
+         pose.jointRots[0] = offsetDir * pose.jointRots[0];
+         result.appendKey(pose);
       }
       return result;
+
    }
 
    void update()
