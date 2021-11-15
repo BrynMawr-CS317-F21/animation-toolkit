@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include <math.h>
 
 using namespace glm;
 using namespace atk;
@@ -32,11 +33,20 @@ public:
    {
       Motion result;
       result.setFramerate(motion.getFramerate());
-
-      // todo: your code here
+      quat rotation = quat(cos(heading/2.0f), 0, sin(heading/2.0f), 0);
       Pose pose = motion.getKey(0);
+      for(int j = 0; j<pose.jointRots.size(); j++){
+         pose.jointRots[j] = inverse(rotation)*pose.jointRots[j];
+      }
+      pose.rootPos = pos;
       result.appendKey(pose);
-      
+      for(int i = 1; i < motion.getNumKeys(); i++){
+         pose = motion.getKey(i);
+         for(int j = 0; j<pose.jointRots.size(); j++){
+            pose.jointRots[j] = inverse(rotation)*pose.jointRots[j];
+         }
+         result.appendKey(pose);
+      }
       return result;
    }
 
