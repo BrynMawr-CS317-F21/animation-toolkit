@@ -154,8 +154,7 @@ public:
 
 int main(int argc, char** argv)
 {
-   A8Unique
- viewer;
+   A8Unique viewer;
    viewer.run();
    return 0;
 }
