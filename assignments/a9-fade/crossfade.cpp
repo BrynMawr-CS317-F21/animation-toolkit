@@ -26,6 +26,35 @@ public:
     reader.load(filename, skeleton_, motion2_);
   }
 
+  Motion reorient(const Motion& motion, const vec3& pos, float heading)
+   {
+      Motion result;
+      result.setFramerate(motion.getFramerate());
+      quat direction = quat(cos(heading/2.0f), 0, sin(heading/2.0f), 0);
+      quat offsetDir = direction * inverse(motion.getKey(0).jointRots[0]);
+      vec3 offsetPos = pos - motion.getKey(0).rootPos;
+      for (int i = 0; i < motion.getNumKeys(); i++){
+         Pose pose = motion.getKey(i);
+         pose.rootPos += offsetPos;
+         pose.rootPos = direction * pose.rootPos; 
+         pose.jointRots[0] = offsetDir * pose.jointRots[0];
+         result.appendKey(pose);
+      }
+      return result;
+
+   }
+
+  void setup()
+   {
+      _heading = 0;
+      _offset = vec3(0);
+      _offset[1] = blend_.getKey(0).rootPos[1];
+      _time = 0;
+
+      blend_ = reorient(blend_, _offset, _heading);
+   }
+
+
   void crossfade(int numBlendFrames)
   {
     assert(motion1_.getNumKeys() > 0);
@@ -34,10 +63,31 @@ public:
     assert(numBlendFrames <= motion1_.getNumKeys());
     assert(numBlendFrames <= motion2_.getNumKeys());
 
+
     int start1 = motion1_.getNumKeys() - numBlendFrames;
     int start2 = 0;
 
-    // TODO: Your code here
+    Pose pose1, pose2;
+    vec3 pos = vec3(0);
+    for(int i = 0; i < start1; i++){
+      pose1 = motion1_.getKey(i);
+      blend_.appendKey(pose1);
+    }
+
+    for(int j = 0; j < numBlendFrames; j++){
+      pose1 = motion1_.getKey(start1 + j);
+      pose2 = motion2_.getKey(j);
+      Pose newPose = pose1.Lerp(pose1, pose2, (float)j/numBlendFrames-1);
+      blend_.appendKey(newPose);
+    }
+    
+    vec3 offset = blend_.getKey(blend_.getNumKeys()-1).rootPos - motion2_.getKey(numBlendFrames).rootPos;
+    for(int k = numBlendFrames; k < motion2_.getNumKeys(); k++){
+      pose1 = motion2_.getKey(k);
+      pose1.rootPos += offset;
+      blend_.appendKey(pose1);
+    }
+
   }
 
   void save(const std::string &filename)
@@ -48,9 +98,54 @@ public:
 
   void scene()
   {
-    blend_.update(skeleton_, elapsedTime());
+    blend_.update(skeleton_, elapsedTime()/5.0f);
     drawer_.draw(skeleton_, *this);
   }
+
+  void keyUp(int key, int mods) 
+   {
+      if (key == GLFW_KEY_LEFT)
+      {
+         _heading += M_PI/8;
+         blend_ = reorient(blend_, _offset, _heading);
+         _time = 0;
+      }
+      else if (key == GLFW_KEY_RIGHT)
+      {
+         _heading -= M_PI/8;
+         blend_ = reorient(blend_, _offset, _heading);
+         _time = 0;
+      }
+
+      if (key == 'W')
+      {
+         _offset[2] += 25;
+         blend_ = reorient(blend_, _offset, _heading);
+         std::cout << _offset << std::endl;
+         _time = 0;
+      }
+      else if (key == 'S')
+      {
+         _offset[2] -= 25;
+         blend_ = reorient(blend_, _offset, _heading);
+         _time = 0;
+         std::cout << _offset << std::endl;
+      }
+      else if (key == 'A')
+      {
+         _offset[0] += 25;
+         blend_ = reorient(blend_, _offset, _heading);
+         _time = 0;
+         std::cout << _offset << std::endl;
+      }
+      else if (key == 'D')
+      {
+         _offset[0] -= 25;
+         blend_ = reorient(blend_, _offset, _heading);
+         _time = 0;
+         std::cout << _offset << std::endl;
+      }
+   }
 
 private:
   Skeleton skeleton_;
@@ -58,6 +153,9 @@ private:
   Motion motion1_;
   Motion motion2_;
   Motion blend_;
+  vec3 _offset;
+  float _heading;
+  float _time;
 };
 
 std::string PruneName(const std::string &name)

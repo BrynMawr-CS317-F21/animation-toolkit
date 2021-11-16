@@ -42,11 +42,16 @@ public:
   virtual void update()
   {
     _walk.update(_skeleton, elapsedTime());
-
-    // TODO: Your code here
+    vec3 pos = _walk.getKey(0).rootPos;
+    for(int i = 1; i < _walk.getNumKeys(); i++){
+      Pose pose = _walk.getKey(i).rootPos;
+      pose.rootPos = pos;
+      _walk.editKey(i, pose);
+    }
+    
 
     // TODO: Override the default camera to follow the character
-    // lookAt(pos, look, vec3(0, 1, 0));
+    //lookAt(pos, look, vec3(0, 1, 0));
 
     // update heading when key is down
     if (keyIsDown('D')) _heading -= 0.05;
