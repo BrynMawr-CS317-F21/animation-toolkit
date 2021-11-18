@@ -42,18 +42,23 @@ public:
   virtual void update()
   {
     _walk.update(_skeleton, elapsedTime());
-    //settig the root position the same as frame 1
+    //settig the root position the same as frame 0;
+    float speed = 0.7f;
+    quat direction = quat(cos(_heading/2.0f), 0, sin(_heading/2.0f), 0);
+    quat offsetDir = direction * inverse(_walk.getKey(0).jointRots[0]);
+    vec3 walkDir = vec3(sin(_heading), 0, cos(_heading));
     vec3 pos = _walk.getKey(0).rootPos;
+    vec3 look = _skeleton.getByName("Beta:Head")->getGlobalTranslation();
+
     for(int i = 0; i < _walk.getNumKeys(); i++){
       Pose pose = _walk.getKey(i);
-      pose.rootPos = pos;
+      pose.rootPos = pos + speed * walkDir;
+      pose.jointRots[0] = offsetDir * pose.jointRots[0];
       _walk.editKey(i, pose);
+      lookAt(pose.rootPos + 250.0f * normalize(vec3(0, 150, -150)), look, vec3(0,1,0));
     }
     
-
-    // TODO: Override the default camera to follow the character
-    //lookAt(pos, look, vec3(0, 1, 0));
-
+    
     // update heading when key is down
     if (keyIsDown('D')) _heading -= 0.05;
     if (keyIsDown('A')) _heading += 0.05;
