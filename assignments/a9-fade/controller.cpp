@@ -42,9 +42,10 @@ public:
   virtual void update()
   {
     _walk.update(_skeleton, elapsedTime());
+    //settig the root position the same as frame 1
     vec3 pos = _walk.getKey(0).rootPos;
-    for(int i = 1; i < _walk.getNumKeys(); i++){
-      Pose pose = _walk.getKey(i).rootPos;
+    for(int i = 0; i < _walk.getNumKeys(); i++){
+      Pose pose = _walk.getKey(i);
       pose.rootPos = pos;
       _walk.editKey(i, pose);
     }

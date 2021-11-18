@@ -41,7 +41,6 @@ public:
          result.appendKey(pose);
       }
       return result;
-
    }
 
   void setup()
