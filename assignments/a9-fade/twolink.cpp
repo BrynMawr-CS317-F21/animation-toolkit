@@ -126,7 +126,34 @@ class AIKSimple : public atkui::Framework
 
   void solveIKTwoLink(Skeleton &skeleton, const vec3 &goalPosition)
   {
-    // todo: implement two link IK algorithm
+    vec3 tmp = goalPosition - skeleton.getByID(0)->getLocalTranslation();
+    vec3 p2 = skeleton.getByID(1)->getLocalTranslation();
+    vec3 p3 = skeleton.getByID(2)->getLocalTranslation();
+
+    float r = sqrt((float)tmp[0] * (float)tmp[0]
+                        + (float)tmp[1] * (float)tmp[1]
+                        + (float)tmp[2] * (float)tmp[2]);
+
+    float l1 = sqrt((float)p2[0] * (float)p2[0]
+                        + (float)p2[1] * (float)p2[1]
+                        + (float)p2[2] * (float)p2[2]);   
+
+    float l2 = sqrt((float)p3[0] * (float)p3[0]
+                        + (float)p3[1] * (float)p3[1]
+                        + (float)p3[2] * (float)p3[2]);
+
+    float theta = acos((r * r - l1 * l1 - l2 * l2)/((-2.0f)*l1*l2));
+    float theta2z = theta - M_PI;
+    quat p2Rot = quat(cos(theta2z/2.0f), 0, 0, sin(theta2z/2.0f));
+    skeleton.getByName("Elbow")->setLocalRotation(p2Rot);
+
+    float theta1z = asin((-1.0f)*l2*sin(theta2z)/r);
+    float gamma = asin((float)goalPosition[1]/r);
+    float beta = atan2(-(1.0f)*(float)goalPosition[2], goalPosition[0]);
+    quat p1Rot = quat(cos(gamma/2.0f), 0, sin(gamma/2.0f), 0)
+                  * quat(cos(beta/2.0f), 0, 0, sin(beta/2.0f))
+                  * quat(cos(theta1z/2.0f), 0, 0, sin(theta1z/2.0f));
+    skeleton.getByName("Shoulder")->setLocalRotation(p1Rot);
   }
 
  private:
