@@ -154,6 +154,7 @@ class AIKSimple : public atkui::Framework
                   * quat(cos(beta/2.0f), 0, 0, sin(beta/2.0f))
                   * quat(cos(theta1z/2.0f), 0, 0, sin(theta1z/2.0f));
     skeleton.getByName("Shoulder")->setLocalRotation(p1Rot);
+    skeleton.fk();
   }
 
  private:
