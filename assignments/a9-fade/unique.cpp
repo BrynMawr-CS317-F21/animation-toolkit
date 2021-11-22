@@ -38,6 +38,12 @@ public:
     reader.load(filename, skeleton_, motion4_);
   }
 
+   void loadMotion5(const std::string &filename)
+  {
+    BVHReader reader;
+    reader.load(filename, skeleton_, motion5_);
+  }
+
   void crossfade(int numBlendFrames, Motion a, Motion b, bool first)
   {
     assert(a.getNumKeys() > 0);
@@ -86,6 +92,7 @@ public:
       crossfade(numBlendFrames, motion1_, motion2_, true);
       crossfade(numBlendFrames, blend_, motion3_, false);
       crossfade(numBlendFrames, blend_, motion4_, false);
+      crossfade(numBlendFrames, blend_, motion5_, false);
       blend_.setFramerate(motion3_.getFramerate());
    }
 
@@ -107,6 +114,7 @@ public:
   Motion motion2_;
   Motion motion3_;
   Motion motion4_;
+  Motion motion5_;
   Motion blend_;
 
 };
@@ -123,7 +131,8 @@ int main(int argc, char** argv)
    std::string motion1 = "../motions/Beta/walking.bvh";
    std::string motion2 = "../motions/Beta/jump.bvh";
    std::string motion3 = "../motions/Beta/standard_run.bvh";
-   std::string motion4 = "../motions/Beta/jump.bvh";
+   std::string motion4 = "../motions/Beta/standard_run.bvh";
+   std::string motion5 = "../motions/Beta/jump.bvh";
    int numFrames = 7;
 
    try
@@ -148,6 +157,7 @@ int main(int argc, char** argv)
    viewer.loadMotion2(motion2);
    viewer.loadMotion3(motion3);
    viewer.loadMotion4(motion4);
+   viewer.loadMotion5(motion5);
    viewer.crossfadeAll(numFrames);
 
    viewer.run();
