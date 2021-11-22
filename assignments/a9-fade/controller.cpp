@@ -43,25 +43,32 @@ public:
   {
     _walk.update(_skeleton, elapsedTime());
     //settig the root position the same as frame 0;
-    float speed = 0.7f;
+    float speed = 0.8f;
     quat direction = quat(cos(_heading/2.0f), 0, sin(_heading/2.0f), 0);
     quat offsetDir = direction * inverse(_walk.getKey(0).jointRots[0]);
     vec3 walkDir = vec3(sin(_heading), 0, cos(_heading));
     vec3 pos = _walk.getKey(0).rootPos;
-    vec3 look = _skeleton.getByName("Beta:Head")->getGlobalTranslation();
+    Transform forward(
+         eulerAngleRO(XYZ, vec3(0,0,0)),
+         vec3(0,0,200), 
+         vec3(1));
 
+    Transform look = _skeleton.getByName("Beta:Head")->getLocal2Global() * forward;
+    vec3 camPos = look.t();
+    camPos = _skeleton.getByName("Beta:Head")->getGlobalTranslation() - camPos;
+    vec3 lookPos = _skeleton.getByName("Beta:Head")->getGlobalTranslation();
     for(int i = 0; i < _walk.getNumKeys(); i++){
       Pose pose = _walk.getKey(i);
       pose.rootPos = pos + speed * walkDir;
       pose.jointRots[0] = offsetDir * pose.jointRots[0];
       _walk.editKey(i, pose);
-      lookAt(pose.rootPos + 250.0f * normalize(vec3(0, 150, -150)), look, vec3(0,1,0));
+      lookAt(camPos + pose.rootPos + vec3(0, 50, 0), pose.rootPos, vec3(0,1,0));
     }
-    
     
     // update heading when key is down
     if (keyIsDown('D')) _heading -= 0.05;
     if (keyIsDown('A')) _heading += 0.05;
+
   }
 
 protected:
