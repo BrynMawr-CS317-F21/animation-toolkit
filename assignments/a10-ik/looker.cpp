@@ -30,6 +30,12 @@ public:
 
    void lookAtTarget(Joint* head, const vec3& target) {
       // TODO: Your code here
+      vec3 z = normalize(target - head->getGlobalTranslation());
+      vec3 x = normalize(cross(vec3(0, 1, 0),z));
+      vec3 y = normalize(cross(z,x));
+      mat3 rotMatrix = mat3(x,y,z);
+      quat rotQuat = quat_cast(rotMatrix);
+      head->setLocalRotation(rotQuat);
       head->fk();
    }
 

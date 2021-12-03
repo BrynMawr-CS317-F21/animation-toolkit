@@ -27,8 +27,15 @@ public:
       _motion.update(_skeleton, elapsedTime());
 
       IKController ik;
-      // TODO: Your code here
 
+      _lhandTarget = vec3(0, 40.0f*(sin(3.0f*elapsedTime())+1.0f),0);
+      _rhandTarget = vec3(0, 40.0f*(-sin(3.0f*elapsedTime())+1.0f),0);
+      _lhandTarget += _skeleton.getByName("Beta:LeftHand")->getGlobalTranslation();
+      _rhandTarget += _skeleton.getByName("Beta:RightHand")->getGlobalTranslation();
+      // setColor(vec3(0, 1, 0));
+      // drawSphere(_lhandTarget, 10);
+      // drawSphere(_rhandTarget, 10);
+      
    }
 
    void scene()
