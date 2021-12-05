@@ -19,6 +19,7 @@ public:
    {
       BVHReader reader;
       reader.load("../motions/Beta/idle.bvh", _skeleton, _motion);
+      reader.load("../motions/Beta/idle.bvh", _skeleton2, _motion2);
       _drawer.color = vec3(1,0,0);
    }
 
@@ -41,22 +42,22 @@ public:
 
       std::vector<Joint*> lhandChain;
       for (Joint* current = _skeleton.getByName("Beta:LeftHand"); 
-        current->getParent() && lhandChain.size() < _skeleton.getNumJoints(); 
+        current->getParent() && lhandChain.size() < 4; 
         current = current->getParent()) {
         lhandChain.push_back(current);
       }
-      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:LeftHand")->getID(),_lhandTarget,lhandChain, 10, 50, 0.01);
+      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:LeftHand")->getID(),_lhandTarget,lhandChain, 0, 30, 0.1);
 
       std::vector<Joint*> rhandChain;
       for (Joint* current = _skeleton.getByName("Beta:RightHand"); 
-        current->getParent() && rhandChain.size() < _skeleton.getNumJoints(); 
+        current->getParent() && rhandChain.size() < 4; 
         current = current->getParent()) {
         rhandChain.push_back(current);
       }
-      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:RightHand")->getID(),_rhandTarget,rhandChain, 10, 50, 0.01);
+      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:RightHand")->getID(),_rhandTarget,rhandChain, 0, 30, 0.1);
       
-      vec3 leftFoot = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
-      vec3 rightFoot = _skeleton.getByName("Beta:RightFoot")->getGlobalTranslation();
+      vec3 leftFoot = _skeleton2.getByName("Beta:LeftFoot")->getGlobalTranslation();
+      vec3 rightFoot = _skeleton2.getByName("Beta:RightFoot")->getGlobalTranslation();
 
       for(int i = 0; i < _motion.getNumKeys(); i++){
          Pose pose = _motion.getKey(i);
@@ -65,15 +66,27 @@ public:
          _motion.editKey(i, pose);
       }
 
-      quat leftFootRot = _skeleton.getByName("Beta:LeftFoot")->getGlobalRotation();
-      quat rightFootRot = _skeleton.getByName("Beta:RightFoot")->getGlobalRotation();
+      quat leftFootRot = _skeleton2.getByName("Beta:LeftFoot")->getLocalRotation();
+      quat rightFootRot = _skeleton2.getByName("Beta:RightFoot")->getLocalRotation();
 
-      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:LeftFoot")->getID(), leftFoot, 0.1);
-      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:RightFoot")->getID(), rightFoot, 0.1);
+      std::vector<Joint*> lfootChain;
+      for (Joint* current = _skeleton.getByName("Beta:LeftFoot"); 
+         current->getParent() && lfootChain.size() < 5; 
+         current = current->getParent()) {
+         lfootChain.push_back(current);
+      }
+      std::vector<Joint*> rfootChain;
+      for (Joint* current = _skeleton.getByName("Beta:RightFoot"); 
+        current->getParent() && rfootChain.size() < 5; 
+        current = current->getParent()) {
+        rfootChain.push_back(current);
+      }
+      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:LeftFoot")->getID(), leftFoot, lfootChain, 0, 30, 0.1);
+      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:RightFoot")->getID(), rightFoot, rfootChain, 0, 30, 0.1);
       
-      // _skeleton.getByName("Beta:LeftFoot")->setGlobalRotation(leftFootRot);
-      // _skeleton.getByName("Beta:RightFoot")->setGlobalRotation(rightFootRot);
-      // _skeleton.fk();
+      _skeleton.getByName("Beta:LeftFoot")->setLocalRotation(leftFootRot);
+      _skeleton.getByName("Beta:RightFoot")->setLocalRotation(rightFootRot);
+      _skeleton.fk();
 
    }
 
@@ -89,7 +102,9 @@ public:
 protected:
    Cyclops _drawer;
    Skeleton _skeleton;
+   Skeleton _skeleton2;
    Motion _motion;
+   Motion _motion2;
 
    // Hand target positions
    vec3 _lhandTarget;

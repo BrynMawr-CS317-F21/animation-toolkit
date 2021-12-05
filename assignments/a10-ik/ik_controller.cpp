@@ -34,7 +34,6 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   axis = inverse(hip->getParent()->getGlobalRotation())*axis;
   quat grandPRot = angleAxis(angleRot, axis);
   skeleton.getByID(hip->getID())->setLocalRotation(grandPRot * hip->getLocalRotation());
-  skeleton.fk();
 
   //use law of cosines to solve rot for parent node
   float r = length(goalPos - hip->getGlobalTranslation());
