@@ -69,21 +69,35 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 bool IKController::solveIKCCD(Skeleton& skeleton, int jointid, 
     const vec3& goalPos, const std::vector<Joint*>& chain, 
     float threshold, int maxIters, float nudgeFactor) {
-  // There are no joints in the IK chain for manipulation
   if (chain.size() == 0) return true;
+  //compute the number of  iterations
+  int numIters = 0;
+  //the initial position of p
   vec3 p = skeleton.getByID(jointid)->getGlobalTranslation();
-  while(length(goalPos-p) > threshold && numIters < maxIters){
+  while(length(goalPos - p) > threshold && numIters < maxIters){
+    //from end effector to root
     for(int i = 0; i < chain.size(); i++){
       //compute end effectors position
-      vec3 e = goalPos - endPos;
-      vec3 r = endPos - chain[i]->getGlobalTranslation();
-      float angleRot = nudgeFactor * atan2(length(cross(r,e)), dot(r,r)+dot(r,e));
-      vec3 axis = cross(r,e).noramlize();
-      quat rot = 
+      p = skeleton.getByID(jointid)->getGlobalTranslation();
+      vec3 e = goalPos - p; //get the position of end effector and compute e
+      vec3 r = p - chain[i]->getGlobalTranslation(); //compute r
+      if(length(e) < threshold || length(r) < threshold) continue;
+      float angleRot = atan2(length(cross(r,e)), dot(r,r)+dot(r,e)); //get the angle to rotate
+      vec3 axis = normalize(cross(r,e)); // compute the axis in global coordinate
+      //deal with the chance that when e/axis are 0
+      if(length(axis) < threshold)
+        continue;
+      //convert the axis into local coordinate
+      axis = inverse(chain[i]->getParent()->getGlobalRotation()) * axis;
+      quat rot = angleAxis(angleRot, axis);
+      chain[i]->setLocalRotation(rot * chain[i]->getLocalRotation());
       skeleton.fk();
+      //update the position of end effector
+      p = skeleton.getByID(jointid)->getGlobalTranslation();
     }
-    p = skeleton.getByID(jointid)->getGlobalTranslation();
     numIters++;
   }
+  p = skeleton.getByID(jointid)->getGlobalTranslation();
+  if(length(goalPos-p) < threshold) return true;
   return false;
 }
