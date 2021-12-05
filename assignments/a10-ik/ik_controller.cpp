@@ -29,12 +29,14 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   //solve for grandparent joint using CCD
   vec3 limbDir = ankle->getGlobalTranslation() - hip->getGlobalTranslation();
   vec3 errorDir = goalPos - ankle->getGlobalTranslation();
+  if(length(errorDir)<epsilon) return true;
   vec3 axis = cross(limbDir, errorDir);
   float angleRot = atan2(length(axis), dot(limbDir,limbDir)+dot(limbDir,errorDir));
   axis = normalize(axis);
   axis = inverse(hip->getParent()->getGlobalRotation())*axis;
   quat grandPRot = angleAxis(angleRot, axis);
   skeleton.getByID(hip->getID())->setLocalRotation(grandPRot * hip->getLocalRotation());
+  skeleton.fk();
 
   //use law of cosines to solve rot for parent node
   float r = length(goalPos - hip->getGlobalTranslation());
@@ -47,6 +49,7 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   limbDir = normalize(knee->getLocalTranslation());
   axis = cross(limbDir, vec3(0,0,-1));
   if (limbDir[1] < 0) axis = cross(limbDir, vec3(0,0,1));
+  if (length(axis) < epsilon) axis = limbDir;
   quat parentRot = angleAxis(theta2z, axis);
   skeleton.getByID(knee->getID())->setLocalRotation(parentRot);
   skeleton.fk();
