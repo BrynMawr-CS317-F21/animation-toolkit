@@ -31,6 +31,7 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   vec3 errorDir = goalPos - ankle->getGlobalTranslation();
   vec3 axis = cross(limbDir, errorDir);
   float angleRot = atan2(length(axis), dot(limbDir,limbDir)+dot(limbDir,errorDir));
+  axis = normalize(axis);
   axis = inverse(hip->getParent()->getGlobalRotation())*axis;
   quat grandPRot = angleAxis(angleRot, axis);
   skeleton.getByID(hip->getID())->setLocalRotation(grandPRot * hip->getLocalRotation());
@@ -49,6 +50,8 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   quat parentRot = angleAxis(theta2z, axis);
   skeleton.getByID(knee->getID())->setLocalRotation(parentRot);
   skeleton.fk();
+
+  if(length(goalPos - ankle->getGlobalTranslation())>epsilon) return false;
   return true;
 }
 
