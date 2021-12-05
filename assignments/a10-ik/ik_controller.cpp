@@ -6,6 +6,17 @@ using namespace atk;
 using namespace glm;
 using namespace std;
 
+// solveIKAnalytic: positions the joint given by jointid so its global position
+// is located at goalPos. This method computes rotations for the parent and grandparent
+// of jointid.
+//
+// param skeleton: the character to modify
+// param jointid: the ID of the end effector
+// param goalPos: the target position for jointid (global pos)
+//
+// return true/false based on whether we could reach the goal
+// side effect: skeleton should by posed such that jointid is located at goalPos (or in this direction of
+// goalPos if the target is out of reach)
 bool IKController::solveIKAnalytic(Skeleton& skeleton, 
     int jointid, const vec3& goalPos, float epsilon) {
   if (jointid == -1) return true;
