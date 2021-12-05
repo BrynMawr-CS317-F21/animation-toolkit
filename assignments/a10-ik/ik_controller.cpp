@@ -49,7 +49,7 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   limbDir = normalize(knee->getLocalTranslation());
   axis = cross(limbDir, vec3(0,0,-1));
   if (limbDir[1] < 0) axis = cross(limbDir, vec3(0,0,1));
-  if (length(axis) < epsilon) axis = limbDir;
+  if (length(axis) < epsilon) axis = limbDir; //when axis and limbDir are parallel
   quat parentRot = angleAxis(theta2z, axis);
   skeleton.getByID(knee->getID())->setLocalRotation(parentRot);
   skeleton.fk();
