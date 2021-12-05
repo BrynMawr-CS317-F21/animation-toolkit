@@ -76,28 +76,27 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
   vec3 p = skeleton.getByID(jointid)->getGlobalTranslation();
   while(length(goalPos - p) > threshold && numIters < maxIters){
     //from end effector to root
-    for(int i = 0; i < chain.size(); i++){
+    for(int i = 1; i < chain.size(); i++){
       //compute end effectors position
       p = skeleton.getByID(jointid)->getGlobalTranslation();
       vec3 e = goalPos - p; //get the position of end effector and compute e
+      if(length(e) < threshold) 
+        return true;
       vec3 r = p - chain[i]->getGlobalTranslation(); //compute r
-      if(length(e) < threshold || length(r) < threshold) continue;
-      float angleRot = atan2(length(cross(r,e)), dot(r,r)+dot(r,e)); //get the angle to rotate
+      if(length(r) < threshold) 
+        continue;
+      float angleRot = nudgeFactor * atan2(length(cross(r,e)), dot(r,r)+dot(r,e)); //get the angle to rotate
       vec3 axis = normalize(cross(r,e)); // compute the axis in global coordinate
-      //deal with the chance that when e/axis are 0
+      //deal with the chance that when axis are 0
       if(length(axis) < threshold)
         continue;
       //convert the axis into local coordinate
       axis = inverse(chain[i]->getParent()->getGlobalRotation()) * axis;
       quat rot = angleAxis(angleRot, axis);
       chain[i]->setLocalRotation(rot * chain[i]->getLocalRotation());
-      skeleton.fk();
-      //update the position of end effector
-      p = skeleton.getByID(jointid)->getGlobalTranslation();
+      skeleton.fk(); //update
     }
     numIters++;
   }
-  p = skeleton.getByID(jointid)->getGlobalTranslation();
-  if(length(goalPos-p) < threshold) return true;
   return false;
 }
