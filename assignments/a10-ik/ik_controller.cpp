@@ -33,9 +33,9 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   float angleRot = atan2(length(axis), dot(limbDir,limbDir)+dot(limbDir,errorDir));
   axis = inverse(hip->getParent()->getGlobalRotation())*axis;
   quat grandPRot = angleAxis(angleRot, axis);
-  hip->setLocalRotation(grandPRot * hip->getLocalRotation());
+  skeleton.getByID(hip->getID())->setLocalRotation(grandPRot * hip->getLocalRotation());
   skeleton.fk();
-  
+
   //use law of cosines to solve rot for parent node
   float r = length(goalPos - hip->getGlobalTranslation());
   float l1 = length(knee->getLocalTranslation());   
@@ -48,7 +48,7 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   axis = cross(limbDir, vec3(0,0,-1));
   if (limbDir[1] < 0) axis = cross(limbDir, vec3(0,0,1));
   quat parentRot = angleAxis(theta2z, axis);
-  knee->setLocalRotation(parentRot);
+  skeleton.getByID(knee->getID())->setLocalRotation(parentRot);
   skeleton.fk();
   return true;
 }
@@ -86,11 +86,11 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
       vec3 r = p - chain[i]->getGlobalTranslation(); //compute error direction
       if(length(r) < threshold) 
         continue;
+      if(length(cross(r,e)) < threshold) continue;
+      if((dot(r,r) + dot(r,e))==0) continue;
       float angleRot = nudgeFactor * atan2(length(cross(r,e)), dot(r,r)+dot(r,e)); //get the angle to rotate
       vec3 axis = normalize(cross(r,e)); // compute the axis in global coordinate
       //deal with the chance that when axis are 0
-      if(length(axis) < threshold)
-        continue;
       //convert the axis into local coordinate
       if(chain[i]->getID()==0) //when root
         axis = inverse(chain[i]->getGlobalRotation()) * axis;

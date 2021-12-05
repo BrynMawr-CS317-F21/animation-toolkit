@@ -37,8 +37,23 @@ public:
       // drawSphere(_rhandTarget, 10);
 
       //lefthand
-      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:LeftHand")->getID(),_lhandTarget, 0);
-      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:RightHand")->getID(),_lhandTarget, 0);
+
+
+      std::vector<Joint*> lhandChain;
+      for (Joint* current = _skeleton.getByName("Beta:LeftHand"); 
+        current->getParent() && lhandChain.size() < _skeleton.getNumJoints(); 
+        current = current->getParent()) {
+        lhandChain.push_back(current);
+      }
+      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:LeftHand")->getID(),_lhandTarget,lhandChain, 10, 50, 0.01);
+
+      std::vector<Joint*> rhandChain;
+      for (Joint* current = _skeleton.getByName("Beta:RightHand"); 
+        current->getParent() && rhandChain.size() < _skeleton.getNumJoints(); 
+        current = current->getParent()) {
+        rhandChain.push_back(current);
+      }
+      ik.solveIKCCD(_skeleton,_skeleton.getByName("Beta:RightHand")->getID(),_rhandTarget,rhandChain, 10, 50, 0.01);
       
       vec3 leftFoot = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
       vec3 rightFoot = _skeleton.getByName("Beta:RightFoot")->getGlobalTranslation();
@@ -50,9 +65,16 @@ public:
          _motion.editKey(i, pose);
       }
 
-      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:LeftFoot")->getID(), leftFoot, 0);
-      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:RightFoot")->getID(), rightFoot, 0);
+      quat leftFootRot = _skeleton.getByName("Beta:LeftFoot")->getGlobalRotation();
+      quat rightFootRot = _skeleton.getByName("Beta:RightFoot")->getGlobalRotation();
+
+      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:LeftFoot")->getID(), leftFoot, 0.1);
+      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:RightFoot")->getID(), rightFoot, 0.1);
       
+      // _skeleton.getByName("Beta:LeftFoot")->setGlobalRotation(leftFootRot);
+      // _skeleton.getByName("Beta:RightFoot")->setGlobalRotation(rightFootRot);
+      // _skeleton.fk();
+
    }
 
    void scene()
