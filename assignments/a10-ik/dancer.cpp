@@ -35,6 +35,23 @@ public:
       // setColor(vec3(0, 1, 0));
       // drawSphere(_lhandTarget, 10);
       // drawSphere(_rhandTarget, 10);
+
+      //lefthand
+      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:LeftHand")->getID(),_lhandTarget, 0);
+      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:RightHand")->getID(),_lhandTarget, 0);
+      
+      vec3 leftFoot = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
+      vec3 rightFoot = _skeleton.getByName("Beta:RightFoot")->getGlobalTranslation();
+
+      for(int i = 0; i < _motion.getNumKeys(); i++){
+         Pose pose = _motion.getKey(i);
+         pose.rootPos[0] = 4.0f * sin(i/3.0f);
+         pose.rootPos[1] = _motion.getKey(0).rootPos[1] + 2.0f * sin(i/3.0f);
+         _motion.editKey(i, pose);
+      }
+
+      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:LeftFoot")->getID(), leftFoot, 0);
+      // ik.solveIKAnalytic(_skeleton,_skeleton.getByName("Beta:RightFoot")->getID(), rightFoot, 0);
       
    }
 

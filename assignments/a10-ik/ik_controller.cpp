@@ -26,29 +26,29 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   Joint* hip = knee->getParent();
 
-  vec3 tmp = goalPos - hip->getLocalTranslation();
-  vec3 p2 = knee->getLocalTranslation();
-  vec3 p3 = ankle->getLocalTranslation();
-
-  float r = length(tmp);
-  float l1 = length(p2);   
-  float l2 = length(p3);
-
+  //solve for grandparent joint using CCD
+  vec3 limbDir = ankle->getGlobalTranslation() - hip->getGlobalTranslation();
+  vec3 errorDir = goalPos - ankle->getGlobalTranslation();
+  vec3 axis = cross(limbDir, errorDir);
+  float angleRot = atan2(length(axis), dot(limbDir,limbDir)+dot(limbDir,errorDir));
+  axis = inverse(hip->getParent()->getGlobalRotation())*axis;
+  quat grandPRot = angleAxis(angleRot, axis);
+  hip->setLocalRotation(grandPRot * hip->getLocalRotation());
+  skeleton.fk();
+  
+  //use law of cosines to solve rot for parent node
+  float r = length(goalPos - hip->getGlobalTranslation());
+  float l1 = length(knee->getLocalTranslation());   
+  float l2 = length(ankle->getLocalTranslation());
   float v = (r * r - l1 * l1 - l2 * l2)/((-2.0f)*l1*l2);
   float value = clamp(v, -1.0f, 1.0f);
   float theta = acos(value);
-  float theta2z = theta - M_PI; 
-  quat p2Rot = quat(cos(theta2z/2.0f), 0, 0, sin(theta2z/2.0f));
-  knee->setLocalRotation(p2Rot);
-
-  float theta1z = asin((-1.0f)*l2*sin(theta2z)/r);
-  float gamma = asin((float)goalPos[1]/r);
-  float beta = atan2(-(1.0f)*(float)goalPos[2], goalPos[0]);
-  quat p1Rot = quat(cos(beta/2.0f), 0, sin(beta/2.0f), 0)
-                * quat(cos(gamma/2.0f), 0, 0, sin(gamma/2.0f))
-                * quat(cos(theta1z/2.0f), 0, 0, sin(theta1z/2.0f));
-  hip->setLocalRotation(p1Rot);
-
+  float theta2z = theta - M_PI; //computed angle
+  limbDir = normalize(knee->getLocalTranslation());
+  axis = cross(limbDir, vec3(0,0,-1));
+  if (limbDir[1] < 0) axis = cross(limbDir, vec3(0,0,1));
+  quat parentRot = angleAxis(theta2z, axis);
+  knee->setLocalRotation(parentRot);
   skeleton.fk();
   return true;
 }
@@ -70,19 +70,20 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
     const vec3& goalPos, const std::vector<Joint*>& chain, 
     float threshold, int maxIters, float nudgeFactor) {
   if (chain.size() == 0) return true;
-  //compute the number of  iterations
-  int numIters = 0;
+
   //the initial position of p
-  vec3 p = skeleton.getByID(jointid)->getGlobalTranslation();
-  while(length(goalPos - p) > threshold && numIters < maxIters){
+  vec3 p = vec3(0);
+
+  for(int j = 0; j < maxIters; j++){ //count for number of iterations
     //from end effector to root
-    for(int i = 1; i < chain.size(); i++){
+    for(int i = 0; i < chain.size(); i++){
       //compute end effectors position
       p = skeleton.getByID(jointid)->getGlobalTranslation();
-      vec3 e = goalPos - p; //get the position of end effector and compute e
+      //get the position of end effector and compute limb direction in global coordinate
+      vec3 e = goalPos - p; 
       if(length(e) < threshold) 
         return true;
-      vec3 r = p - chain[i]->getGlobalTranslation(); //compute r
+      vec3 r = p - chain[i]->getGlobalTranslation(); //compute error direction
       if(length(r) < threshold) 
         continue;
       float angleRot = nudgeFactor * atan2(length(cross(r,e)), dot(r,r)+dot(r,e)); //get the angle to rotate
@@ -91,12 +92,14 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
       if(length(axis) < threshold)
         continue;
       //convert the axis into local coordinate
-      axis = inverse(chain[i]->getParent()->getGlobalRotation()) * axis;
+      if(chain[i]->getID()==0) //when root
+        axis = inverse(chain[i]->getGlobalRotation()) * axis;
+      else
+        axis = inverse(chain[i]->getParent()->getGlobalRotation()) * axis;
       quat rot = angleAxis(angleRot, axis);
-      chain[i]->setLocalRotation(rot * chain[i]->getLocalRotation());
+      skeleton.getByID(chain[i]->getID())->setLocalRotation(rot * chain[i]->getLocalRotation());
       skeleton.fk(); //update
     }
-    numIters++;
   }
   return false;
 }

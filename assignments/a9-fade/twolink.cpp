@@ -126,7 +126,7 @@ class AIKSimple : public atkui::Framework
 
   void solveIKTwoLink(Skeleton &skeleton, const vec3 &goalPosition)
   {
-    vec3 tmp = goalPosition - skeleton.getByID(0)->getLocalTranslation();
+    vec3 tmp = goalPosition - skeleton.getByID(0)->getGlobalTranslation();
     vec3 p2 = skeleton.getByID(1)->getLocalTranslation();
     vec3 p3 = skeleton.getByID(2)->getLocalTranslation();
 
