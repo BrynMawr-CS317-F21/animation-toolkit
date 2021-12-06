@@ -27,12 +27,16 @@ ASeek::ASeek() : ABehavior("Seek")
 // @param actor: steerable character to move
 // @return desired velocity
 //
-// @note: call actor.getPosition to get teh actor's position
+// @note: call actor.getPosition to get the actor's position
 // @note: call getParam("MaxSpeed") to get the max speed
 vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+   vec3 pos = actor.getPosition(); //get the position of the actors
+   float speed = getParam("MaxSpeed"); //get the max speed
+   vec3 direction = normalize(target-pos); //get the direction
+   vec3 velocity  = speed * direction; //velocity = speed * direction
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -48,12 +52,16 @@ AFlee::AFlee() : ABehavior("Flee")
 // @param actor: steerable character to move
 // @return desired velocity
 //
-// @note: call actor.getPosition to get teh actor's position
+// @note: call actor.getPosition to get the actor's position
 // @note: call getParam("MaxSpeed") to get the max speed
 vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   vec3 pos = actor.getPosition(); //get the position of the actors
+   float speed = getParam("MaxSpeed");
+   vec3 direction = normalize(pos-targetPos);
+   vec3 velocity  = speed * direction;
+   return velocity;
 }
 
 //--------------------------------------------------------------

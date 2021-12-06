@@ -16,12 +16,24 @@ float ASteerable::kOriKp = 150.0;
 void ASteerable::senseControlAct(const vec3& veld, float dt)
 {
    // Compute _vd and _thetad
+   _vd = length(veld);
+   _thetad = atan2(veld[0], veld[2]);
 
    // compute _force and _torque
-
+   _force = _mass * kVelKv * (_vd - _state[VEL]);
+   _torque = _inertia * (-kOriKv * _state[AVEL] + kOriKp * (_thetad - _state[ORI]));
+   
    // find derivative
+   _derivative[POS] = _state[VEL];
+   _derivative[ORI] = _state[AVEL];
+   _derivative[VEL] = _force/_mass;
+   _derivative[AVEL] = _torque/_inertia;
 
    // update state
+   _state[POS] += dt * _derivative[POS];
+   _state[ORI] += dt * _derivative[ORI];
+   _state[VEL] += dt * _derivative[VEL];
+   _state[AVEL] += dt * _derivative[AVEL];
 
    // compute global position and orientation and update _characterRoot
    quat rot = glm::angleAxis(_state[ORI], vec3(0,1,0));
