@@ -4,9 +4,15 @@
 using namespace glm;
 using namespace atk;
 
+//we want to make sure that damping ratio is 1 as we want critically damped
+//and we want zeta * natural frequency * time = 4 where as time = 0.5
+//natural frequency * zeta = natural frequency = 8
+//kOriKp = 8 ^ 2 =  64.0 
+//kOriKv = 2 * 8 = 16.0
+
 float ASteerable::kVelKv = 150.0; 
-float ASteerable::kOriKv = 150.0;  
-float ASteerable::kOriKp = 150.0;
+float ASteerable::kOriKv = 16.0;  
+float ASteerable::kOriKp = 64.0;
 
 // Given a desired velocity, veld, and dt, compute a transform holding 
 // the new orientation and change in position
@@ -51,7 +57,7 @@ void ASteerable::randomizeAppearance()
    _time = 10.0f * agl::random();
 
    // to randomize color, call _drawer.setColor
-   _drawer.color = agl::randomUnitVector();
+   setColor(agl::randomUnitVector());
 
    // to randomize shape, compute random values for _drawer.setJointRadius
    // or randomly assign different drawers to have a mix of characters

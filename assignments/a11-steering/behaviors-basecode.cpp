@@ -83,7 +83,14 @@ AArrival::AArrival() : ABehavior("Arrival")
 vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   float r = getParam("TargetRadius");
+   vec3 targetOffset = targetPos - actor.getPosition();
+   float distance = length(targetPos);
+   float speed = getParam("MaxSpeed");;
+   if(distance <= r)
+      speed = (distance/r) * speed;
+   vec3 velocity = speed * normalize(targetOffset);
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -102,7 +109,14 @@ ADeparture::ADeparture() : ABehavior("Departure")
 vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-   return vec3(0,0,0);
+   float r = getParam("OuterRadius");
+   vec3 targetOffset = actor.getPosition() - targetPos;
+   float distance = length(targetPos);
+   float speed = getParam("MaxSpeed");
+   if(distance <= r)
+      speed = (distance/r) * speed;
+   vec3 velocity = speed * normalize(targetOffset);
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -133,7 +147,13 @@ AWander::AWander() : ABehavior("Wander")
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+   float r1 = 100.0f; //wander strength
+   float r2 = 20.0f; //magnitude of random displacement
+   vec3 c = target;//center of the circle in local coordinates
+   vec3 jitterVel = r1 * normalize(r2 * agl::randomUnitVector());
+   vec3 vd = getParam("MaxSpeed")*(actor.getPosition() - target);
+   vd += jitterVel; 
+   return vd;
 }
 
 //--------------------------------------------------------------
