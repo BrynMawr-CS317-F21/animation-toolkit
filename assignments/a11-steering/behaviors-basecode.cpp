@@ -10,7 +10,7 @@ using namespace atk;
 ABehavior::ABehavior(const char* name) : _name(name)
 {
    // TODO: set good values
-   setParam("MaxSpeed", 1);
+   setParam("MaxSpeed", 30);
    setParam("AgentRadius", 1);
 }
 
@@ -150,7 +150,9 @@ vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    float r1 = 100.0f; //wander strength
    float r2 = 20.0f; //magnitude of random displacement
    vec3 c = target;//center of the circle in local coordinates
-   vec3 jitterVel = r1 * normalize(r2 * agl::randomUnitVector());
+   vec3 jitterVel = r2 * agl::randomUnitVector();
+   jitterVel[1] = 0; //this ensures that we only take x,z component as random variakble
+   jitterVel = r1* normalize(jitterVel);
    vec3 vd = getParam("MaxSpeed")*(actor.getPosition() - target);
    vd += jitterVel; 
    return vd;
