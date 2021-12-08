@@ -16,3 +16,7 @@ a8-unique
 ![a8-unique](https://user-images.githubusercontent.com/89867062/141743062-268e0137-d482-45ca-8de5-b37c484eda12.gif)
 
 For unique, when press 1, the walking skeleton will dance like samba as upper body and lower body is walking. Press 2 will be the original splice part. Background effect is also set.
+
+![a8-unique-new](https://user-images.githubusercontent.com/89867062/145276270-9ac712dc-7f6f-4913-8bea-727e0361db55.gif)
+
+An alien walking out of a UFO. Tried. Hope you can tell that is an UFO. I also splice another motion with walking so that the alien is walking so confidently that it can take control over the earth (scared)
