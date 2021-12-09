@@ -10,7 +10,7 @@ using namespace atk;
 ABehavior::ABehavior(const char* name) : _name(name)
 {
    // TODO: set good values
-   setParam("MaxSpeed", 30);
+   setParam("MaxSpeed", 200);
    setParam("AgentRadius", 1);
 }
 
@@ -99,7 +99,7 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
    setParam("InnerRadius", 1);
-   setParam("OuterRadius", 1);
+   setParam("OuterRadius", 30);
    setParam("kDeparture", 1);
 }
 
@@ -147,14 +147,15 @@ AWander::AWander() : ABehavior("Wander")
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   float r1 = 100.0f; //wander strength
+   float r1 = 500.0f; //wander strength
    float r2 = 20.0f; //magnitude of random displacement
-   vec3 c = target;//center of the circle in local coordinates
-   vec3 jitterVel = r2 * agl::randomUnitVector();
-   jitterVel[1] = 0; //this ensures that we only take x,z component as random variakble
-   jitterVel = r1* normalize(jitterVel);
-   vec3 vd = getParam("MaxSpeed")*(actor.getPosition() - target);
-   vd += jitterVel; 
+   vec3 c = actor.getRotation() * vec3(0, 0, 100);//forward direction of the actor
+   // vec3 x = actor.getPosition() + c;
+   vec3 vd = getParam("MaxSpeed") * normalize(c * vec3(r1* agl::random(-1, 1), 0, r1*agl::random(-1,1)));
+   // vec3 jitterVel = vec3(r2 * agl::random(), 0, r2 * agl::random());
+   // jitterVel = r1* normalize(jitterVel);
+   // vec3 vd = getParam("MaxSpeed") * normalize(c+actor.getPosition()) + jitterVel; 
+   std::cout << vd << "\n";
    return vd;
 }
 
