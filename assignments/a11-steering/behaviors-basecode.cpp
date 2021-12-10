@@ -71,7 +71,7 @@ AArrival::AArrival() : ABehavior("Arrival")
 {
    // TODO: Set good parameters
    setParam("kArrival", 1);
-   setParam("TargetRadius", 1);
+   setParam("TargetRadius", 100.0f);
 }
 
 //
