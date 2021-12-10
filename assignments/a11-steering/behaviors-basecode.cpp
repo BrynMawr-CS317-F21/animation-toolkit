@@ -142,16 +142,21 @@ AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
    setParam("WanderStrength", 2000.0f);
+   setParam("WanderAngle", 5.0f);
+   setParam("WanderJitter", 1.0f);
 }
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   float r1 = getParam("WanderStrength"); //wander strength//magnitude of random displacement
+   float wanderStrength = getParam("WanderStrength"); //wander strength//magnitude of random displacement
+   float r1 = getParam("WanderJitter");
    vec3 c = actor.getRotation() * vec3(0, 0, 100);//forward direction of the actor
-   vec3 vd = getParam("MaxSpeed") * 
-      normalize(c * vec3(r1 * agl::random(-1, 1), 0, r1*agl::random(-1,1)));
+   float angle = getParam("WanderAngle");
+   angle += agl::random(-r1, r1); // random angle jitter (r1 should be a small value)
+   vec3 vJitterPos = c + wanderStrength * vec3(cos(angle), 0, sin(angle));
+   vec3 vd = getParam("MaxSpeed") * normalize(vJitterPos - actor.getPosition());
    return vd;
 }
 

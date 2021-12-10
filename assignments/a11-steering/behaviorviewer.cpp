@@ -24,7 +24,7 @@ ABehaviorViewer::ABehaviorViewer() :
    _behaviors[FLOCKING] = new AFlocking();
    _behaviors[AVOID] = new AAvoid();
    _behaviors[WANDER] = new AWander();
-   setWindowSize(1000,800);
+   //setWindowSize(1000,800);
 }
 
 ABehaviorViewer::~ABehaviorViewer()
@@ -161,7 +161,7 @@ void ABehaviorViewer::runGui()
    };
 
    ImGui::Begin("Demo Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize);
-   // ImGui::SetWindowSize(ImVec2(150, 600));
+   ImGui::SetWindowSize(ImVec2(150, 600));
    ImGui::SetWindowPos(ImVec2(5, 5));
    ImGui::Checkbox("Paused", &_paused);
    ImGui::Checkbox("Debug draw", &ASteerable::kDebugDraw);
