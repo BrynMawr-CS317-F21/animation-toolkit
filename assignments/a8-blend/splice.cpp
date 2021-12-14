@@ -27,10 +27,29 @@ public:
    Motion spliceUpperBody(const Motion& lower, const Motion& upper, float alpha)
    {
       Motion result;
+      Pose newPose;
+      Joint* spine = _skeleton.getByName("Beta:Spine1");
       result.setFramerate(lower.getFramerate());
-      // todo: your code here
-      result.appendKey(lower.getKey(0));
+      for(int i = 0; i < lower.getNumKeys(); i++){
+         newPose = lower.getKey(i);
+         for(int j = spine->getID(); j<spine->getID()+countChild(spine); j++){
+            glm::quat q = slerp(lower.getKey(i).jointRots[j], upper.getKey(i+120).jointRots[j], alpha);
+            newPose.jointRots[j] = q;
+         }
+         result.appendKey(newPose);
+      }
       return result;
+   }
+
+   int countChild(Joint* a){
+      if(a->getNumChildren()>0){
+         int tmp = 1;
+         for(int i = 0; i<a->getNumChildren();i++){
+            tmp+=countChild(a->getChildAt(i));
+         }
+         return tmp;
+      }
+      return 1;
    }
 
    void scene()

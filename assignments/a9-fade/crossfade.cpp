@@ -34,10 +34,36 @@ public:
     assert(numBlendFrames <= motion1_.getNumKeys());
     assert(numBlendFrames <= motion2_.getNumKeys());
 
-    int start1 = motion1_.getNumKeys() - numBlendFrames;
+
+    int start1 = motion1_.getNumKeys() - numBlendFrames -1;
     int start2 = 0;
 
-    // TODO: Your code here
+    blend_.setFramerate(motion2_.getFramerate());
+
+    Pose pose1, pose2;
+    vec3 pos = vec3(0);
+    for(int i = 0; i < start1; i++){
+      pose1 = motion1_.getKey(i);
+      blend_.appendKey(pose1);
+    }
+
+    for(int j = 0; j <= numBlendFrames; j++){
+      pose1 = motion1_.getKey(start1 + j);
+      pose2 = motion2_.getKey(j);
+      pose2.rootPos[0] = pose1.rootPos[0];
+      pose2.rootPos[2] = pose1.rootPos[2];
+      Pose newPose = newPose.Lerp(pose1, pose2, (float)j/(float)numBlendFrames);
+      newPose.jointRots[0] = slerp(pose1.jointRots[0], pose2.jointRots[0], (float)j/(float)numBlendFrames);
+      blend_.appendKey(newPose);
+    }
+
+    vec3 offset = motion1_.getKey(motion1_.getNumKeys()-1).rootPos - motion2_.getKey(numBlendFrames).rootPos;
+    for(int k = numBlendFrames+1; k < motion2_.getNumKeys(); k++){
+      pose1 = motion2_.getKey(k);
+      pose1.rootPos += offset;
+      blend_.appendKey(pose1);
+    }
+
   }
 
   void save(const std::string &filename)

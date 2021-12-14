@@ -32,11 +32,26 @@ public:
       Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
       Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
 
+      int lAid = leftArm->getID();
+      int rAid = rightArm->getID();
+      int lEid = leftElbow->getID();
+      int rEid = rightElbow->getID();
+      
+      quat leftOffset = leftLocalRot * inverse(motion.getKey(0).jointRots[lAid]);
+      quat rightOffset = rightLocalRot * inverse(motion.getKey(0).jointRots[rAid]);
+      quat leftElbowOffset = elbowLocalRot * inverse(motion.getKey(0).jointRots[lEid]);
+      quat rightElbowOffset = elbowLocalRot * inverse(motion.getKey(0).jointRots[rEid]);
+
       Motion result;
       result.setFramerate(motion.getFramerate());
-      // todo: your code here
-      result.appendKey(motion.getKey(0));
-
+      for(int i = 0; i < motion.getNumKeys(); i++){
+         Pose tmp = motion.getKey(i);
+         tmp.jointRots[lAid] = leftOffset * tmp.jointRots[lAid];
+         tmp.jointRots[rAid] = rightOffset * tmp.jointRots[rAid];
+         tmp.jointRots[lEid] = leftElbowOffset * tmp.jointRots[lEid];
+         tmp.jointRots[rEid] = rightElbowOffset * tmp.jointRots[rEid];
+         result.appendKey(tmp);
+      }
       return result;
    }
 
@@ -51,11 +66,21 @@ public:
       Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
       Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
 
+      int lAid = leftArm->getID();
+      int rAid = rightArm->getID();
+      int lEid = leftElbow->getID();
+      int rEid = rightElbow->getID();
+
       Motion result;
       result.setFramerate(motion.getFramerate());
-      // todo: your code here
-      result.appendKey(motion.getKey(0));
-
+      for(int i = 0; i < motion.getNumKeys(); i++){
+         Pose tmp = motion.getKey(i);
+         tmp.jointRots[lAid] = leftRot;
+         tmp.jointRots[rAid] = rightRot;
+         tmp.jointRots[lEid] = elbowRot;
+         tmp.jointRots[rEid] = elbowRot;
+         result.appendKey(tmp);
+      }
       return result;
    }
 

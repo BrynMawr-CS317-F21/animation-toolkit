@@ -24,7 +24,7 @@ ABehaviorViewer::ABehaviorViewer() :
    _behaviors[FLOCKING] = new AFlocking();
    _behaviors[AVOID] = new AAvoid();
    _behaviors[WANDER] = new AWander();
-   setWindowSize(1000,800);
+   //setWindowSize(1000,800);
 }
 
 ABehaviorViewer::~ABehaviorViewer()
@@ -156,8 +156,8 @@ void ABehaviorViewer::runGui()
    ImGui::NewFrame();
 
    static const char* type[] = {
-      "Seek", "Flee", "Arrival", "Departure", "Avoid", "Alignment",
-      "Wander", "Separation", "Cohesion", "Flocking", "Leader"
+      "Seek", "Flee", "Arrival", "Departure", "Avoid", "Wander",
+      "Alignment", "Separation", "Cohesion", "Flocking", "Leader"
    };
 
    ImGui::Begin("Demo Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize);

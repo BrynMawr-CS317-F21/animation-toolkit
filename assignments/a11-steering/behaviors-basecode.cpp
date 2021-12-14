@@ -10,7 +10,7 @@ using namespace atk;
 ABehavior::ABehavior(const char* name) : _name(name)
 {
    // TODO: set good values
-   setParam("MaxSpeed", 1);
+   setParam("MaxSpeed", 100);
    setParam("AgentRadius", 1);
 }
 
@@ -27,12 +27,16 @@ ASeek::ASeek() : ABehavior("Seek")
 // @param actor: steerable character to move
 // @return desired velocity
 //
-// @note: call actor.getPosition to get teh actor's position
+// @note: call actor.getPosition to get the actor's position
 // @note: call getParam("MaxSpeed") to get the max speed
 vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+   vec3 pos = actor.getPosition(); //get the position of the actors
+   float speed = getParam("MaxSpeed"); //get the max speed
+   vec3 direction = normalize(target-pos); //get the direction
+   vec3 velocity  = speed * direction; //velocity = speed * direction
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -48,12 +52,16 @@ AFlee::AFlee() : ABehavior("Flee")
 // @param actor: steerable character to move
 // @return desired velocity
 //
-// @note: call actor.getPosition to get teh actor's position
+// @note: call actor.getPosition to get the actor's position
 // @note: call getParam("MaxSpeed") to get the max speed
 vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   vec3 pos = actor.getPosition(); //get the position of the actors
+   float speed = getParam("MaxSpeed");
+   vec3 direction = normalize(pos-targetPos);
+   vec3 velocity  = speed * direction;
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -63,7 +71,7 @@ AArrival::AArrival() : ABehavior("Arrival")
 {
    // TODO: Set good parameters
    setParam("kArrival", 1);
-   setParam("TargetRadius", 1);
+   setParam("TargetRadius", 100.0f);
 }
 
 //
@@ -75,7 +83,14 @@ AArrival::AArrival() : ABehavior("Arrival")
 vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   float r = getParam("TargetRadius");
+   vec3 targetOffset = targetPos - actor.getPosition();
+   float distance = length(targetPos);
+   float speed = getParam("MaxSpeed");;
+   if(distance <= r)
+      speed = (distance/r) * speed;
+   vec3 velocity = speed * normalize(targetOffset);
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -84,7 +99,7 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
    setParam("InnerRadius", 1);
-   setParam("OuterRadius", 1);
+   setParam("OuterRadius", 30);
    setParam("kDeparture", 1);
 }
 
@@ -94,7 +109,14 @@ ADeparture::ADeparture() : ABehavior("Departure")
 vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-   return vec3(0,0,0);
+   float r = getParam("OuterRadius");
+   vec3 targetOffset = actor.getPosition() - targetPos;
+   float distance = length(targetPos);
+   float speed = getParam("MaxSpeed");
+   if(distance <= r)
+      speed = (distance/r) * speed;
+   vec3 velocity = speed * normalize(targetOffset);
+   return velocity;
 }
 
 //--------------------------------------------------------------
@@ -119,13 +141,23 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
 AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
+   setParam("WanderStrength", 2000.0f);
+   setParam("WanderAngle", 5.0f);
+   setParam("WanderJitter", 1.0f);
 }
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+   float wanderStrength = getParam("WanderStrength"); //wander strength//magnitude of random displacement
+   float r1 = getParam("WanderJitter");
+   vec3 c = actor.getRotation() * vec3(0, 0, 100);//forward direction of the actor
+   float angle = getParam("WanderAngle");
+   angle += agl::random(-r1, r1); // random angle jitter (r1 should be a small value)
+   vec3 vJitterPos = c + wanderStrength * vec3(cos(angle), 0, sin(angle));
+   vec3 vd = getParam("MaxSpeed") * normalize(vJitterPos - actor.getPosition());
+   return vd;
 }
 
 //--------------------------------------------------------------
